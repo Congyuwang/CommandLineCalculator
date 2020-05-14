@@ -1,8 +1,8 @@
 package calculator;
 
-public class preservedKeywordException extends RuntimeException {
+public class PreservedKeywordException extends RuntimeException {
 
-    preservedKeywordException(String message) {
+    PreservedKeywordException(String message) {
         super(message);
     }
 

@@ -1,5 +1,6 @@
 import java.math.BigDecimal;
 import java.util.Scanner;
+import calculator.PreservedKeywordException;
 import calculator.Calculator;
 
 public class Main {
@@ -61,6 +62,8 @@ public class Main {
                 System.out.println(e.getMessage());
             } catch (ArithmeticException e2) {
                 System.out.println(e2.getMessage());
+            } catch (PreservedKeywordException e3) {
+                System.out.println(e3.getMessage());
             }
         }
     }

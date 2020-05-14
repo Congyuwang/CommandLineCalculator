@@ -219,7 +219,7 @@ public class Calculator {
         if (isAssignment.find()) {
             String LHS = isAssignment.group("variable").replaceAll("\\s*", "");
             if (Functions.isFunctionName(LHS)) {
-                throw new preservedKeywordException(String.format("%s is preserved", LHS));
+                throw new PreservedKeywordException(String.format("%s is preserved", LHS));
             }
             String assignment = isAssignment.group("assignment");
             String RHS = isAssignment.group("evaluation");
