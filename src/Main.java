@@ -1,7 +1,6 @@
-package calculator;
-
 import java.math.BigDecimal;
 import java.util.Scanner;
+import calculator.Calculator;
 
 public class Main {
 
@@ -26,19 +25,26 @@ public class Main {
             }
             if ("/help".equals(nextLine)) {
                 System.out.println("=================================================================================");
-                System.out.println("Help Menu\n" + "\n"
-                                 + "This is a simple calculator program that allows variable definition, and\n"
-                                 + "supports basic functions like exponential, logarithm, and square root.\n\n"
-                                 + "Variable names must start with a latin letter, and follows latin letters or\n"
-                                 + "numbers and underscores. Examples: a1, number_of_apples, alpha__.\n" + "\n"
-                                 + "Supported operators (in descending order of priority): () (parenthesis), !,\n"
-                                 + "+, - (logical_not, unary positive, unary negative), ^ (power) *, /, %\n"
-                                 + "(multiply, divide, remainder), +, - (plus, minus), > < >= <= (greater, less,\n"
-                                 + "greater equal, less equal), ==, != (equals, not equals), & (logical_and), |\n"
-                                 + "logical_or.\n" + "\n" + "Supported assignments: =, +=, -=, *=, /=, %= assignments\n" + "\n"
-                                 + "Supported functions: sqrt() (square root), exp() (exponent), log() (natural\n"
-                                 + "logarithm), log10() (logarithm base 10),\n" + "\n"
-                                 + "Predefined variables: e and pi, which can be reassigned if needed.\n");
+                System.out.println("Help Menu\n" +
+                                   "\n" +
+                                   "This is a simple calculator program that allows variable definition, and\n" +
+                                   "supports basic functions like exponential, logarithm, and square root.\n" +
+                                   "\n" +
+                                   "Variable names must start with a latin letter, and follows latin letters or\n" +
+                                   "numbers and underscores. Examples: a1, number_of_apples, alpha__.\n" +
+                                   "\n" +
+                                   "Supported operators (in descending order of priority): () (parenthesis), !,\n" +
+                                   "+, - (logical_not, unary positive, unary negative), ^ (power) *, /, %\n" +
+                                   "(multiply, divide, remainder), +, - (plus, minus), > < >= <= (greater, less,\n" +
+                                   "greater equal, less equal), ==, != (equals, not equals), & (logical_and), |\n" +
+                                   "logical_or.\n" +
+                                   "\n" +
+                                   "Supported assignments: =, +=, -=, *=, /=, %= assignments\n" +
+                                   "\n" +
+                                   "Supported functions: sqrt() (square root), exp() (exponent), log() (natural\n" +
+                                   "logarithm), log10() (logarithm base 10),\n" +
+                                   "\n" +
+                                   "Predefined variables: e and pi, which can be reassigned if needed.\n");
                 System.out.println("=================================================================================");
                 continue;
             }
