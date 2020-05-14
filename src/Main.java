@@ -25,7 +25,7 @@ public class Main {
                 continue;
             }
             if ("/help".equals(nextLine)) {
-                System.out.println("=================================================================================");
+                System.out.println("================================================================================");
                 System.out.println("Help Menu\n" +
                                    "\n" +
                                    "This is a simple calculator program that allows variable definition, and\n" +
@@ -46,7 +46,7 @@ public class Main {
                                    "logarithm), log10() (logarithm base 10),\n" +
                                    "\n" +
                                    "Predefined variables: e and pi, which can be reassigned if needed.\n");
-                System.out.println("=================================================================================");
+                System.out.println("================================================================================");
                 continue;
             }
             if (nextLine.charAt(0) == '/') {
