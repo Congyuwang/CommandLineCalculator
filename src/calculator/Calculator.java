@@ -103,7 +103,7 @@ public class Calculator {
         }
 
         private static final Set<String> binaryOperators = Set.of("+", "-", "*", "/", "<", "<=", ">", ">=", "==", "!=",
-                "^", "%", "&&", "||");
+                "^", "%", "&", "|");
 
         public static boolean isBinaryOperator(String s) {
             return s == null ? false : binaryOperators.contains(s);
@@ -162,7 +162,7 @@ public class Calculator {
             case MULTIPLY:
                 return left.multiply(right, DECIMAL32);
             case POWER:
-                if (right.remainder(BigDecimal.ONE, DECIMAL32).equals(BigDecimal.ZERO)) {
+                if (right.remainder(BigDecimal.ONE, DECIMAL32).compareTo(BigDecimal.ZERO) == 0) {
                     return left.pow(right.intValue(), DECIMAL32);
                 }
                 return new BigDecimal(Math.pow(left.doubleValue(), right.doubleValue()), DECIMAL32);
@@ -175,13 +175,13 @@ public class Calculator {
             case GREATER_EQUAL:
                 return left.compareTo(right) >= 0 ? BigDecimal.ONE : BigDecimal.ZERO;
             case EQUAL:
-                return left.equals(right) ? BigDecimal.ONE : BigDecimal.ZERO;
+                return left.compareTo(right) == 0 ? BigDecimal.ONE : BigDecimal.ZERO;
             case NOT_EQUAL:
-                return left.equals(right) ? BigDecimal.ZERO : BigDecimal.ONE;
+                return left.compareTo(right) == 0 ? BigDecimal.ZERO : BigDecimal.ONE;
             case AND:
-                return left.equals(BigDecimal.ZERO) || right.equals(BigDecimal.ZERO) ? BigDecimal.ZERO : BigDecimal.ONE;
+                return left.compareTo(BigDecimal.ZERO) == 0 || right.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO : BigDecimal.ONE;
             case OR:
-                return left.equals(BigDecimal.ZERO) && right.equals(BigDecimal.ZERO) ? BigDecimal.ZERO : BigDecimal.ONE;
+                return left.compareTo(BigDecimal.ZERO) == 0 && right.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO : BigDecimal.ONE;
             default:
                 return null;
         }
@@ -198,7 +198,7 @@ public class Calculator {
             case EXPONENT:
                 return new BigDecimal(Math.exp(input.doubleValue()), DECIMAL32);
             case LOGICAL_NOT:
-                return input.equals(BigDecimal.ZERO) ? BigDecimal.ONE : BigDecimal.ZERO;
+                return input.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ONE : BigDecimal.ZERO;
             case NEGATE:
                 return input.negate();
             default:
@@ -399,7 +399,7 @@ public class Calculator {
                         previousInput = capturedVariableOrFunction;
                     } else if (variables.containsKey(capturedVariableOrFunction)) {
                         if (logicalNot) {
-                            postFix.push("0".equals(variables.get(capturedVariableOrFunction).toString()) ? "1" : "0");
+                            postFix.push(variables.get(capturedVariableOrFunction).compareTo(BigDecimal.ZERO) == 0 ? "1" : "0");
                             logicalNot = false;
                         } else if (negativeSign) {
                             postFix.push("-" + variables.get(capturedVariableOrFunction).toString());
