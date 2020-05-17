@@ -1,7 +1,7 @@
 import java.math.BigDecimal;
 import java.util.Scanner;
 import calculator.PreservedKeywordException;
-import calculator.Calculator;
+import calculator.CalculatorProcessor;
 
 public class CalculatorCommandLine {
 
@@ -12,7 +12,7 @@ public class CalculatorCommandLine {
                            "    Enter /exit to exit.");
         System.out.println("=================================================");
         Scanner scanner = new Scanner(System.in);
-        Calculator calculator = new Calculator();
+        CalculatorProcessor calculator = new CalculatorProcessor();
         while (true) {
             System.out.print(">> ");
             String nextLine = scanner.nextLine();

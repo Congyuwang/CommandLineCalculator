@@ -8,4 +8,4 @@ javac -d out/class/ -sourcepath src/ src/*.java src/**/*.java
 
 cd $BASEDIR/out/class/ || exit
 
-jar --create --file ../calculator.jar --main-class Main *
+jar --create --file ../calculator.jar --main-class Calculator *

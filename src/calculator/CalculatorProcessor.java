@@ -38,7 +38,7 @@ import java.math.MathContext;
  * reassigned if needed.
  * </p>
  */
-public class Calculator {
+public class CalculatorProcessor {
 
     private static final String VARIABLE = "[a-zA-Z][a-zA-Z0-9_]*";
     private static final String NUMBER = "(([1-9]\\d*|0)(\\.\\d*)?)|(\\.\\d+)";
@@ -58,7 +58,7 @@ public class Calculator {
     private static final MathContext DECIMAL32 = MathContext.DECIMAL32;
     private final HashMap<String, BigDecimal> variables = new HashMap<>();
 
-    public Calculator() {
+    public CalculatorProcessor() {
         variables.put("e", new BigDecimal(Math.E, DECIMAL32));
         variables.put("pi", new BigDecimal(Math.PI, DECIMAL32));
     }

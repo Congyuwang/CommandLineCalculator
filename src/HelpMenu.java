@@ -43,7 +43,7 @@ public class HelpMenu {
             + "<li><font face=\"Courier\">log10()</font> (logarithm base 10)</li>"
             + "</ul>"
             + "<p><b><font size=\"+0.5\">Predefined variables</font></b>: <font face=\"Courier\">e</font>"
-            + "and <font face=\"Courier\">pi</font>, which can be reassigned if needed.</p><br>");
+            + " and <font face=\"Courier\">pi</font>, which can be reassigned if needed.</p><br>");
             setEditable(false);
         }
     };

@@ -3,7 +3,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.math.BigDecimal;
 
-import calculator.Calculator;
+import calculator.CalculatorProcessor;
 import calculator.PreservedKeywordException;
 
 public class CalculatorUI extends JFrame {
@@ -12,7 +12,7 @@ public class CalculatorUI extends JFrame {
     private final SpringLayout mainPanelLayout;
     private final JPanel mainPanel;
     private final JScrollPane scrollPane;
-    private final Calculator calculator;
+    private final CalculatorProcessor calculator;
     private final KeyListener globalKeyListener;
     private JTextField inputField;
     private JTextArea inputGuide;
@@ -46,7 +46,7 @@ public class CalculatorUI extends JFrame {
 
     public CalculatorUI() {
         super("Calculator");
-        calculator = new Calculator();
+        calculator = new CalculatorProcessor();
         setSize(600, 400);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
