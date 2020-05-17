@@ -89,7 +89,6 @@ public class CalculatorUI extends JFrame {
         helpButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("help");
                 displayScrollPane(helpMenu, scrollPane);
                 displayButton(backButton, helpButton);
             }
@@ -265,7 +264,6 @@ public class CalculatorUI extends JFrame {
         frameLayout.putConstraint(SpringLayout.SOUTH, s, -30, SpringLayout.SOUTH, getContentPane());
         frameLayout.putConstraint(SpringLayout.EAST, s, 0, SpringLayout.EAST, getContentPane());
         frameLayout.putConstraint(SpringLayout.WEST, s, 0, SpringLayout.WEST, getContentPane());
-        System.out.println("help here!");
         revalidate();
         repaint();
     }

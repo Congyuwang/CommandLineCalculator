@@ -436,8 +436,6 @@ public class CalculatorProcessor {
             } else {
                 throw new IllegalArgumentException("Invalid expression: empty expression");
             }
-            System.out.println("cache " + cache);
-            System.out.println("pos   " + postFix);
         }
         while (!cache.isEmpty()) {
             String temp = cache.pop();
