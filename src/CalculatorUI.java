@@ -15,8 +15,31 @@ public class CalculatorUI extends JFrame {
     private final Calculator calculator;
     private final KeyListener globalKeyListener;
     private JTextField inputField;
+    private JTextArea inputGuide;
+    private HistoryNode current;
     private final int[] round;
     private final JComponent[] previousLine;
+
+    private class HistoryNode {
+        int index;
+        HistoryNode previous;
+        HistoryNode next;
+        String input;
+    }
+
+    private HistoryNode lastInput;
+
+    private void addHistory(String input, int index) {
+        HistoryNode oldLast = lastInput;
+        lastInput = new HistoryNode();
+        if (oldLast != null) {
+            oldLast.next = lastInput;
+        }
+        lastInput.input = input;
+        lastInput.previous = oldLast;
+        lastInput.next = null;
+        lastInput.index = index;
+    }
 
     public CalculatorUI() {
         super("Calculator");
@@ -59,9 +82,11 @@ public class CalculatorUI extends JFrame {
 
         previousLine = new JComponent[] {null};
         round = new int[] {1};
-        JTextArea inputGuide = printNewString(String.format("In[%d]:", round[0]), Color.BLACK, Color.LIGHT_GRAY);
+        inputGuide = printNewString(String.format("In[%d]:", round[0]), Color.BLACK, Color.LIGHT_GRAY);
         addComponentToNewLine(inputGuide, previousLine[0]);
         inputField = newInput();
+        addHistory(inputField.getText(), round[0]);
+        current = lastInput;
         appendComponentToLine(inputField, inputGuide);
         previousLine[0] = inputField;
         globalKeyListener = new KeyListener() {
@@ -72,9 +97,32 @@ public class CalculatorUI extends JFrame {
 
             @Override
             public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    mainOperation(round, previousLine);
-                };
+                switch(e.getKeyCode()) {
+                    case KeyEvent.VK_ENTER:
+                        if (lastInput != null) {
+                            lastInput.input = inputField.getText();
+                        }
+                        mainOperation(round, previousLine, inputField.getText());
+                        break;
+                    case KeyEvent.VK_UP:
+                        current.input = inputField.getText();
+                        if (current.previous != null) {
+                            current = current.previous;
+                        }
+                        inputGuide.setText(String.format("In[%d]:", current.index));
+                        inputField.setText(current.input);
+                        break;
+                    case KeyEvent.VK_DOWN:
+                        current.input = inputField.getText();
+                        if (current.next != null) {
+                            current = current.next;
+                        }
+                        inputGuide.setText(String.format("In[%d]:", current.index));
+                        inputField.setText(current.input);
+                        break;
+                    default:
+                        break;
+                }
             }
 
             @Override
@@ -103,9 +151,33 @@ public class CalculatorUI extends JFrame {
 
                     @Override
                     public void keyPressed(KeyEvent e) {
-                        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                            mainOperation(round, previousLine);
-                        };
+                        switch(e.getKeyCode()) {
+                            case KeyEvent.VK_ENTER:
+                                if (lastInput != null) {
+                                    lastInput.input = inputField.getText();
+                                }
+                                inputGuide.setText(String.format("In[%d]:", round[0]));
+                                mainOperation(round, previousLine, inputField.getText());
+                                break;
+                            case KeyEvent.VK_UP:
+                                current.input = inputField.getText();
+                                if (current.previous != null) {
+                                    current = current.previous;
+                                }
+                                inputGuide.setText(String.format("In[%d]:", current.index));
+                                inputField.setText(current.input);
+                                break;
+                            case KeyEvent.VK_DOWN:
+                                current.input = inputField.getText();
+                                if (current.next != null) {
+                                    current = current.next;
+                                }
+                                inputGuide.setText(String.format("In[%d]:", current.index));
+                                inputField.setText(current.input);
+                                break;
+                            default:
+                                break;
+                        }
                     }
 
                     @Override
@@ -119,8 +191,7 @@ public class CalculatorUI extends JFrame {
         };
     }
 
-    private final void mainOperation(int[] round, JComponent[] previousLine) {
-        String inputString = inputField.getText();
+    private final void mainOperation(int[] round, JComponent[] previousLine, String inputString) {
         inputField.setEditable(false);
         if (!"".equals(inputString.strip())) {
             round[0]++;
@@ -135,9 +206,11 @@ public class CalculatorUI extends JFrame {
             } catch (PreservedKeywordException e3) {
                 output = e3.getMessage();
             }
-            JTextArea inputGuide = printNewString(String.format("In[%d]:", round[0]), Color.BLACK, Color.LIGHT_GRAY);
+            inputGuide = printNewString(String.format("In[%d]:", round[0]), Color.BLACK, Color.LIGHT_GRAY);
             inputGuide.addKeyListener(globalKeyListener);
             inputField = newInput();
+            addHistory(inputField.getText(), round[0]);
+            current = lastInput;
             if (output != null) {
                 JTextArea newText = printNewString(output, Color.BLACK, Color.WHITE);
                 newText.addKeyListener(globalKeyListener);
@@ -154,7 +227,6 @@ public class CalculatorUI extends JFrame {
         JScrollBar vScrollBar = scrollPane.getVerticalScrollBar();
         vScrollBar.setValue(vScrollBar.getModel().getMaximum() - vScrollBar.getModel().getExtent());
     }
-
 
     private final JTextArea printNewString(String s, Color foreground, Color background) {
         return new JTextArea() {
