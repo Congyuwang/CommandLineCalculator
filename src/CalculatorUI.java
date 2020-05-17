@@ -162,7 +162,7 @@ public class CalculatorUI extends JFrame {
 
     private final void mainOperation(int[] round, JComponent[] previousLine, String inputString) {
         inputField.setEditable(false);
-        if (!"".equals(inputString.strip())) {
+        if (!"".equals(inputString.trim())) {
             round[0]++;
             String output;
             try {

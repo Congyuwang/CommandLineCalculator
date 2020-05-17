@@ -1,10 +1,12 @@
 package calculator;
 
 import java.util.ArrayDeque;
+import java.util.Arrays;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.math.BigDecimal;
@@ -66,7 +68,7 @@ public class CalculatorProcessor {
     private static enum Functions {
         SQUARE_ROOT, NATURAL_LOG, LOG_TEN, EXPONENT, LOGICAL_NOT, NEGATE;
 
-        private static final Set<String> functionNames = Set.of("sqrt", "log", "log10", "exp", "b-", "!");
+        private static final Set<String> functionNames = new HashSet<>(Arrays.asList("sqrt", "log", "log10", "exp", "b-", "!"));
 
         public static boolean isFunctionName(String s) {
             return s == null ? false : functionNames.contains(s);
@@ -102,8 +104,8 @@ public class CalculatorProcessor {
             priority = p;
         }
 
-        private static final Set<String> binaryOperators = Set.of("+", "-", "*", "/", "<", "<=", ">", ">=", "==", "!=",
-                "^", "%", "&", "|");
+        private static final Set<String> binaryOperators = new HashSet<>(Arrays.asList("+", "-", "*", "/", "<", "<=", ">", ">=", "==", "!=",
+                "^", "%", "&", "|"));
 
         public static boolean isBinaryOperator(String s) {
             return s == null ? false : binaryOperators.contains(s);
@@ -190,7 +192,7 @@ public class CalculatorProcessor {
     private BigDecimal functions(BigDecimal input, Functions f) {
         switch (f) {
             case SQUARE_ROOT:
-                return input.sqrt(DECIMAL32);
+                return new BigDecimal(Math.sqrt(input.doubleValue()), DECIMAL32);
             case NATURAL_LOG:
                 return new BigDecimal(Math.log(input.doubleValue()), DECIMAL32);
             case LOG_TEN:
