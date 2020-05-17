@@ -434,10 +434,12 @@ public class Calculator {
             } else {
                 throw new IllegalArgumentException("Invalid expression: empty expression");
             }
+            System.out.println("cache " + cache);
+            System.out.println("pos   " + postFix);
         }
         while (!cache.isEmpty()) {
             String temp = cache.pop();
-            if ("(".equals(cache.peek()) || "f(".equals(cache.peek())) {
+            if ("(".equals(temp) || "f(".equals(temp)) {
                 throw new IllegalArgumentException(
                         "Invalid expression: cannot find matching right parenthesis - missing )?");
             }
