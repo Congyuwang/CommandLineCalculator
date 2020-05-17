@@ -19,6 +19,9 @@ public class CalculatorUI extends JFrame {
     private HistoryNode current;
     private final int[] round;
     private final JComponent[] previousLine;
+    private final JButton helpButton;
+    private final JButton backButton;
+    private final JScrollPane helpMenu;
 
     private class HistoryNode {
         int index;
@@ -48,24 +51,9 @@ public class CalculatorUI extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        mainPanelLayout = new SpringLayout();
-        frameLayout = new SpringLayout();
         getContentPane().setBackground(Color.WHITE);
         getContentPane().setForeground(Color.WHITE);
-        getContentPane().setLayout(frameLayout);
         setMinimumSize(new Dimension(300, 200));
-        mainPanel = new JPanel();
-        mainPanel.setBorder(null);
-        mainPanel.setLayout(mainPanelLayout);
-        mainPanel.setBackground(Color.WHITE);
-        mainPanel.setForeground(Color.WHITE);
-        scrollPane = new JScrollPane(mainPanel);
-        scrollPane.setBackground(Color.WHITE);
-        scrollPane.setForeground(Color.WHITE);
-        frameLayout.putConstraint(SpringLayout.NORTH, scrollPane, 20, SpringLayout.NORTH, getContentPane());
-        frameLayout.putConstraint(SpringLayout.SOUTH, scrollPane, -20, SpringLayout.SOUTH, getContentPane());
-        frameLayout.putConstraint(SpringLayout.EAST, scrollPane, 0, SpringLayout.EAST, getContentPane());
-        frameLayout.putConstraint(SpringLayout.WEST, scrollPane, 0, SpringLayout.WEST, getContentPane());
 
         addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent e) {
@@ -80,15 +68,41 @@ public class CalculatorUI extends JFrame {
             }
         });
 
-        previousLine = new JComponent[] {null};
-        round = new int[] {1};
-        inputGuide = printNewString(String.format("In[%d]:", round[0]), Color.BLACK, Color.LIGHT_GRAY);
-        addComponentToNewLine(inputGuide, previousLine[0]);
-        inputField = newInput();
-        addHistory(inputField.getText(), round[0]);
-        current = lastInput;
-        appendComponentToLine(inputField, inputGuide);
-        previousLine[0] = inputField;
+        mainPanelLayout = new SpringLayout();
+        frameLayout = new SpringLayout();
+        getContentPane().setLayout(frameLayout);
+        mainPanel = new JPanel();
+        mainPanel.setBorder(BorderFactory.createEmptyBorder());
+        mainPanel.setLayout(mainPanelLayout);
+        mainPanel.setBackground(Color.WHITE);
+        mainPanel.setForeground(Color.WHITE);
+        scrollPane = new JScrollPane(mainPanel);
+        scrollPane.setBackground(Color.WHITE);
+        scrollPane.setForeground(Color.WHITE);
+
+        helpButton = new JButton("HELP");
+        backButton = new JButton("BACK");
+        helpMenu = HelpMenu.createHelp();
+        displayScrollPane(scrollPane, null);
+        displayButton(helpButton, null);
+
+        helpButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("help");
+                displayScrollPane(helpMenu, scrollPane);
+                displayButton(backButton, helpButton);
+            }
+        });
+
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                displayScrollPane(scrollPane, helpMenu);
+                displayButton(helpButton, backButton);
+            }
+        });
+
         globalKeyListener = new KeyListener() {
 
             @Override
@@ -96,8 +110,12 @@ public class CalculatorUI extends JFrame {
             }
 
             @Override
+            public void keyReleased(KeyEvent e) {
+            }
+
+            @Override
             public void keyPressed(KeyEvent e) {
-                switch(e.getKeyCode()) {
+                switch (e.getKeyCode()) {
                     case KeyEvent.VK_ENTER:
                         if (lastInput != null) {
                             lastInput.input = inputField.getText();
@@ -124,71 +142,22 @@ public class CalculatorUI extends JFrame {
                         break;
                 }
             }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-            }
-
         };
+
+        previousLine = new JComponent[] {null};
+        round = new int[] {1};
+        inputGuide = printNewString(String.format("In[%d]:", round[0]), Color.BLACK, Color.LIGHT_GRAY);
+        addComponentToNewLine(inputGuide, previousLine[0]);
+        inputField = newInput();
+        addHistory(inputField.getText(), round[0]);
+        current = lastInput;
+        appendComponentToLine(inputField, inputGuide);
+        previousLine[0] = inputField;
         inputGuide.addKeyListener(globalKeyListener);
         addKeyListener(globalKeyListener);
 
-        add(scrollPane);
         setVisible(true);
         inputField.requestFocus();
-    }
-
-    private final JTextField newInput() {
-        return new JTextField() {
-            private static final long serialVersionUID = -2671807274130384111L;
-            {
-                setBackground(Color.LIGHT_GRAY);
-                addKeyListener(new KeyListener() {
-
-                    @Override
-                    public void keyTyped(KeyEvent e) {
-                    }
-
-                    @Override
-                    public void keyPressed(KeyEvent e) {
-                        switch(e.getKeyCode()) {
-                            case KeyEvent.VK_ENTER:
-                                if (lastInput != null) {
-                                    lastInput.input = inputField.getText();
-                                }
-                                inputGuide.setText(String.format("In[%d]:", round[0]));
-                                mainOperation(round, previousLine, inputField.getText());
-                                break;
-                            case KeyEvent.VK_UP:
-                                current.input = inputField.getText();
-                                if (current.previous != null) {
-                                    current = current.previous;
-                                }
-                                inputGuide.setText(String.format("In[%d]:", current.index));
-                                inputField.setText(current.input);
-                                break;
-                            case KeyEvent.VK_DOWN:
-                                current.input = inputField.getText();
-                                if (current.next != null) {
-                                    current = current.next;
-                                }
-                                inputGuide.setText(String.format("In[%d]:", current.index));
-                                inputField.setText(current.input);
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-
-                    @Override
-                    public void keyReleased(KeyEvent e) {
-                    }
-
-                });
-                setMaximumSize(getMinimumSize());
-                setPreferredSize(getMinimumSize());
-            }
-        };
     }
 
     private final void mainOperation(int[] round, JComponent[] previousLine, String inputString) {
@@ -223,9 +192,21 @@ public class CalculatorUI extends JFrame {
             previousLine[0] = inputField;
             inputField.requestFocus();
         }
-        paintComponents(getGraphics());
+        revalidate();
         JScrollBar vScrollBar = scrollPane.getVerticalScrollBar();
         vScrollBar.setValue(vScrollBar.getModel().getMaximum() - vScrollBar.getModel().getExtent());
+    }
+
+    private final JTextField newInput() {
+        return new JTextField() {
+            private static final long serialVersionUID = -2671807274130384111L;
+            {
+                setBackground(Color.LIGHT_GRAY);
+                addKeyListener(globalKeyListener);
+                setMaximumSize(getMinimumSize());
+                setPreferredSize(getMinimumSize());
+            }
+        };
     }
 
     private final JTextArea printNewString(String s, Color foreground, Color background) {
@@ -274,10 +255,33 @@ public class CalculatorUI extends JFrame {
         mainPanel.setMaximumSize(mainPanelLayout.minimumLayoutSize(mainPanel));
     }
 
-    private static final long serialVersionUID = 8477203213070754493L;
-
-    public static void main(final String[] args) {
-        new CalculatorUI();
+    private void displayScrollPane(JScrollPane s, JScrollPane old) {
+        if (old != null) {
+            remove(old);
+            frameLayout.removeLayoutComponent(old);
+        }
+        add(s);
+        frameLayout.putConstraint(SpringLayout.NORTH, s, 30, SpringLayout.NORTH, getContentPane());
+        frameLayout.putConstraint(SpringLayout.SOUTH, s, -30, SpringLayout.SOUTH, getContentPane());
+        frameLayout.putConstraint(SpringLayout.EAST, s, 0, SpringLayout.EAST, getContentPane());
+        frameLayout.putConstraint(SpringLayout.WEST, s, 0, SpringLayout.WEST, getContentPane());
+        System.out.println("help here!");
+        revalidate();
+        repaint();
     }
+
+    private void displayButton(JButton s, JButton old) {
+        if (old != null) {
+            remove(old);
+            frameLayout.removeLayoutComponent(old);
+        }
+        add(s);
+        frameLayout.putConstraint(SpringLayout.NORTH, s, 2, SpringLayout.NORTH, getContentPane());
+        frameLayout.putConstraint(SpringLayout.WEST, s, 2, SpringLayout.WEST, getContentPane());
+        revalidate();
+        repaint();
+    }
+
+    private static final long serialVersionUID = 8477203213070754493L;
 
 }
