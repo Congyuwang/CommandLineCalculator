@@ -140,6 +140,7 @@ public class CalculatorUI extends JFrame {
                     default:
                         break;
                 }
+                inputField.requestFocus();
             }
         };
 
@@ -160,8 +161,8 @@ public class CalculatorUI extends JFrame {
     }
 
     private final void mainOperation(int[] round, JComponent[] previousLine, String inputString) {
-        inputField.setEditable(false);
         if (!"".equals(inputString.trim())) {
+            inputField.setEditable(false);
             round[0]++;
             String output;
             try {
@@ -189,7 +190,6 @@ public class CalculatorUI extends JFrame {
             }
             appendComponentToLine(inputField, inputGuide);
             previousLine[0] = inputField;
-            inputField.requestFocus();
         }
         revalidate();
         JScrollBar vScrollBar = scrollPane.getVerticalScrollBar();
