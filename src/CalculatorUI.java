@@ -128,8 +128,12 @@ public class CalculatorUI extends JFrame {
             try {
                 BigDecimal result = calculator.expression(inputString);
                 output = result == null ? null : result.toString();
-            } catch (PreservedKeywordException | IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 output = e.getMessage();
+            } catch (ArithmeticException e2) {
+                output = e2.getMessage();
+            } catch (PreservedKeywordException e3) {
+                output = e3.getMessage();
             }
             JTextArea inputGuide = printNewString(String.format("In[%d]:", round[0]), Color.BLACK, Color.LIGHT_GRAY);
             inputGuide.addKeyListener(globalKeyListener);
