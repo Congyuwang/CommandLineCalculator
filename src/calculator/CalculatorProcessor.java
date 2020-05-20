@@ -66,9 +66,10 @@ public class CalculatorProcessor {
     }
 
     private static enum Functions {
-        SQUARE_ROOT, NATURAL_LOG, LOG_TEN, EXPONENT, LOGICAL_NOT, NEGATE;
+        SQUARE_ROOT, NATURAL_LOG, LOG_TEN, EXPONENT, LOGICAL_NOT, NEGATE, SINE,
+        COSINE, TANGENT;
 
-        private static final Set<String> functionNames = new HashSet<>(Arrays.asList("sqrt", "log", "log10", "exp", "b-", "!"));
+        private static final Set<String> functionNames = new HashSet<>(Arrays.asList("sqrt", "log", "log10", "exp", "b-", "!", "sin", "cos", "tan"));
 
         public static boolean isFunctionName(String s) {
             return s == null ? false : functionNames.contains(s);
@@ -88,6 +89,12 @@ public class CalculatorProcessor {
                     return NEGATE;
                 case "!":
                     return LOGICAL_NOT;
+                case "sin":
+                    return SINE;
+                case "cos":
+                    return COSINE;
+                case "tan":
+                    return TANGENT;
                 default:
                     return null;
             }
@@ -203,6 +210,12 @@ public class CalculatorProcessor {
                 return input.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ONE : BigDecimal.ZERO;
             case NEGATE:
                 return input.negate();
+            case SINE:
+                return new BigDecimal(Math.sin(input.doubleValue()), DECIMAL32);
+            case COSINE:
+                return new BigDecimal(Math.cos(input.doubleValue()), DECIMAL32);
+            case TANGENT:
+                return new BigDecimal(Math.tan(input.doubleValue()), DECIMAL32);
             default:
                 return null;
         }
