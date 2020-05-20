@@ -33,7 +33,7 @@ import java.math.MathContext;
  * <p>
  * Supported <em>functions</em>: {@code sqrt()} (square root), {@code exp()}
  * (exponent), {@code log()} (natural logarithm), {@code log10()} (logarithm
- * base 10),
+ * base 10), {@code sin()}, {@code cos()}, {@code tan()}
  * </p>
  * <p>
  * Predefined <em>variables</em>: {@code e} and {@code pi}, which can be
