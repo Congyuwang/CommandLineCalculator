@@ -23,7 +23,7 @@ public class CalculatorUI extends JFrame {
     private final JButton backButton;
     private final JScrollPane helpMenu;
 
-    private class HistoryNode {
+    private static class HistoryNode {
         int index;
         HistoryNode previous;
         HistoryNode next;
@@ -86,20 +86,14 @@ public class CalculatorUI extends JFrame {
         displayScrollPane(scrollPane, null);
         displayButton(helpButton, null);
 
-        helpButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                displayScrollPane(helpMenu, scrollPane);
-                displayButton(backButton, helpButton);
-            }
+        helpButton.addActionListener(e -> {
+            displayScrollPane(helpMenu, scrollPane);
+            displayButton(backButton, helpButton);
         });
 
-        backButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                displayScrollPane(scrollPane, helpMenu);
-                displayButton(helpButton, backButton);
-            }
+        backButton.addActionListener(e -> {
+            displayScrollPane(scrollPane, helpMenu);
+            displayButton(helpButton, backButton);
         });
 
         globalKeyListener = new KeyListener() {
@@ -160,7 +154,7 @@ public class CalculatorUI extends JFrame {
         inputField.requestFocus();
     }
 
-    private final void mainOperation(int[] round, JComponent[] previousLine, String inputString) {
+    private void mainOperation(int[] round, JComponent[] previousLine, String inputString) {
         if (!"".equals(inputString.trim())) {
             inputField.setEditable(false);
             round[0]++;
@@ -168,12 +162,8 @@ public class CalculatorUI extends JFrame {
             try {
                 BigDecimal result = calculator.expression(inputString);
                 output = result == null ? null : result.toString();
-            } catch (IllegalArgumentException e) {
+            } catch (IllegalArgumentException | PreservedKeywordException | ArithmeticException e) {
                 output = e.getMessage();
-            } catch (ArithmeticException e2) {
-                output = e2.getMessage();
-            } catch (PreservedKeywordException e3) {
-                output = e3.getMessage();
             }
             inputGuide = printNewString(String.format("In[%d]:", round[0]), Color.BLACK, Color.LIGHT_GRAY);
             inputGuide.addKeyListener(globalKeyListener);
@@ -196,7 +186,7 @@ public class CalculatorUI extends JFrame {
         vScrollBar.setValue(vScrollBar.getModel().getMaximum() - vScrollBar.getModel().getExtent());
     }
 
-    private final JTextField newInput() {
+    private JTextField newInput() {
         return new JTextField() {
             private static final long serialVersionUID = -2671807274130384111L;
             {
@@ -208,7 +198,7 @@ public class CalculatorUI extends JFrame {
         };
     }
 
-    private final JTextArea printNewString(String s, Color foreground, Color background) {
+    private JTextArea printNewString(String s, Color foreground, Color background) {
         return new JTextArea() {
             private static final long serialVersionUID = -5370026524180441819L;
             {
@@ -223,7 +213,7 @@ public class CalculatorUI extends JFrame {
         };
     }
 
-    private final void addComponentToNewLine(JComponent newLine, JComponent previousLine) {
+    private void addComponentToNewLine(JComponent newLine, JComponent previousLine) {
         mainPanel.add(newLine);
         mainPanelLayout.putConstraint(SpringLayout.WEST, newLine, 10, SpringLayout.WEST, mainPanel);
         if (previousLine == null) {
@@ -238,7 +228,7 @@ public class CalculatorUI extends JFrame {
         mainPanel.setMaximumSize(mainPanelLayout.minimumLayoutSize(mainPanel));
     }
 
-    private final void appendComponentToLine(JComponent newComponent, JComponent leftComponent) {
+    private void appendComponentToLine(JComponent newComponent, JComponent leftComponent) {
         mainPanel.add(newComponent);
         if (leftComponent == null) {
             throw new IllegalArgumentException("null left component");

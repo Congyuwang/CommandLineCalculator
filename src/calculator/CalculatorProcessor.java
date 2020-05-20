@@ -50,7 +50,7 @@ public class CalculatorProcessor {
                                                  "(?<number>" + NUMBER + ")\\s*|" +
                                                  "(?<parenthesis>" + PARENTHESIS + ")\\s*|" +
                                                  "(?<operator>" + OPERATORS + ")\\s*";
-    private static final String EVALUATION = "(!|\\||&|%|!=|==|>=|<=|[a-zA-Z0-9_\\.+\\-*/^()>< ])*";
+    private static final String EVALUATION = "(!|\\||&|%|!=|==|>=|<=|[a-zA-Z0-9_.+\\-*/^()>< ])*";
     private static final String ASSIGNMENT = "^\\s*(?<variable>" + VARIABLE + ")\\s*" +
                                                   "(?<assignment>[+\\-*/%]?)=\\s*" +
                                                   "(?<evaluation>" + EVALUATION + ")\\s*$";
@@ -61,18 +61,18 @@ public class CalculatorProcessor {
     private final HashMap<String, BigDecimal> variables = new HashMap<>();
 
     public CalculatorProcessor() {
-        variables.put("e", new BigDecimal(Math.E, DECIMAL32));
-        variables.put("pi", new BigDecimal(Math.PI, DECIMAL32));
+        variables.put("e", BigDecimal.valueOf(Math.E));
+        variables.put("pi", BigDecimal.valueOf(Math.PI));
     }
 
-    private static enum Functions {
+    private enum Functions {
         SQUARE_ROOT, NATURAL_LOG, LOG_TEN, EXPONENT, LOGICAL_NOT, NEGATE, SINE,
         COSINE, TANGENT;
 
         private static final Set<String> functionNames = new HashSet<>(Arrays.asList("sqrt", "log", "log10", "exp", "b-", "!", "sin", "cos", "tan"));
 
         public static boolean isFunctionName(String s) {
-            return s == null ? false : functionNames.contains(s);
+            return s != null && functionNames.contains(s);
         }
 
         public static Functions of(String c) {
@@ -101,9 +101,9 @@ public class CalculatorProcessor {
         }
     }
 
-    private static enum Operators {
+    private enum Operators {
         OR(-8), AND(-7), NOT_EQUAL(-6), EQUAL(-6), GREATER(-4), LESS(-4), LESS_EQUAL(-4), GREATER_EQUAL(-4),
-        PLUS(-3), MINUS(-3), MULTIPLY(-2), DIVIDE(-2), REMAINDER(-2), POWER(-1);
+        PLUS(-3), MINUS(-3), MULTIPLY(-2), DIVIDE(-2), REMAINDER(-2), POWER(-1), UNKNOWN(-100);
 
         private final int priority;
 
@@ -115,7 +115,7 @@ public class CalculatorProcessor {
                 "^", "%", "&", "|"));
 
         public static boolean isBinaryOperator(String s) {
-            return s == null ? false : binaryOperators.contains(s);
+            return s != null && binaryOperators.contains(s);
         }
 
         public static Operators of(String c) {
@@ -149,7 +149,7 @@ public class CalculatorProcessor {
                 case "|":
                     return OR;
                 default:
-                    return null;
+                    return UNKNOWN;
             }
         }
 
@@ -174,7 +174,7 @@ public class CalculatorProcessor {
                 if (right.remainder(BigDecimal.ONE, DECIMAL32).compareTo(BigDecimal.ZERO) == 0) {
                     return left.pow(right.intValue(), DECIMAL32);
                 }
-                return new BigDecimal(Math.pow(left.doubleValue(), right.doubleValue()), DECIMAL32);
+                return BigDecimal.valueOf(Math.pow(left.doubleValue(), right.doubleValue()));
             case LESS:
                 return left.compareTo(right) < 0 ? BigDecimal.ONE : BigDecimal.ZERO;
             case LESS_EQUAL:
@@ -199,23 +199,23 @@ public class CalculatorProcessor {
     private BigDecimal functions(BigDecimal input, Functions f) {
         switch (f) {
             case SQUARE_ROOT:
-                return new BigDecimal(Math.sqrt(input.doubleValue()), DECIMAL32);
+                return BigDecimal.valueOf(Math.sqrt(input.doubleValue()));
             case NATURAL_LOG:
-                return new BigDecimal(Math.log(input.doubleValue()), DECIMAL32);
+                return BigDecimal.valueOf(Math.log(input.doubleValue()));
             case LOG_TEN:
-                return new BigDecimal(Math.log10(input.doubleValue()), DECIMAL32);
+                return BigDecimal.valueOf(Math.log10(input.doubleValue()));
             case EXPONENT:
-                return new BigDecimal(Math.exp(input.doubleValue()), DECIMAL32);
+                return BigDecimal.valueOf(Math.exp(input.doubleValue()));
             case LOGICAL_NOT:
                 return input.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ONE : BigDecimal.ZERO;
             case NEGATE:
                 return input.negate();
             case SINE:
-                return new BigDecimal(Math.sin(input.doubleValue()), DECIMAL32);
+                return BigDecimal.valueOf(Math.sin(input.doubleValue()));
             case COSINE:
-                return new BigDecimal(Math.cos(input.doubleValue()), DECIMAL32);
+                return BigDecimal.valueOf(Math.cos(input.doubleValue()));
             case TANGENT:
-                return new BigDecimal(Math.tan(input.doubleValue()), DECIMAL32);
+                return BigDecimal.valueOf(Math.tan(input.doubleValue()));
             default:
                 return null;
         }
@@ -284,7 +284,7 @@ public class CalculatorProcessor {
                     throw new IllegalArgumentException("Invalid expression: fail to evaluate operator");
                 }
             } else {
-                cache.push(new BigDecimal(temp, DECIMAL32));
+                cache.push(new BigDecimal(temp));
             }
         }
         if (cache.size() != 1) {
@@ -305,7 +305,7 @@ public class CalculatorProcessor {
                 String capturedParenthesis = mainMatcher.group("parenthesis");
                 String capturedOperator = mainMatcher.group("operator");
                 String capturedVariableOrFunction = mainMatcher.group("variable");
-                String capturednumber = mainMatcher.group("number");
+                String capturedNumber = mainMatcher.group("number");
                 if (capturedOperator != null) {
                     if (Functions.isFunctionName(previousInput)) {
                         throw new IllegalArgumentException("Invalid expression: invalid function call");
@@ -408,7 +408,7 @@ public class CalculatorProcessor {
 
                 if (capturedVariableOrFunction != null) {
                     if (Functions.isFunctionName(previousInput) || "operand".equals(previousInput) || ")".equals(previousInput)) {
-                        throw new IllegalArgumentException("Invalid expression: misplaced function or varible name");
+                        throw new IllegalArgumentException("Invalid expression: misplaced function or variable name");
                     }
                     if (Functions.isFunctionName(capturedVariableOrFunction)) {
                         previousInput = capturedVariableOrFunction;
@@ -429,19 +429,19 @@ public class CalculatorProcessor {
                     }
                 }
 
-                if (capturednumber != null) {
+                if (capturedNumber != null) {
                     if (Functions.isFunctionName(previousInput)) {
                         throw new IllegalArgumentException(
                                 String.format("Invalid expression: missing ( after %s", capturedVariableOrFunction));
                     }
                     if (logicalNot) {
-                        postFix.push("0".equals(capturednumber) ? "1" : "0");
+                        postFix.push("0".equals(capturedNumber) ? "1" : "0");
                         logicalNot = false;
                     } else if (negativeSign) {
-                        postFix.push("-" + capturednumber);
+                        postFix.push("-" + capturedNumber);
                         negativeSign = false;
                     } else {
-                        postFix.push(capturednumber);
+                        postFix.push(capturedNumber);
                     }
                     previousInput = "operand";
                 }

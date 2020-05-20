@@ -58,12 +58,8 @@ public class CalculatorCommandLine {
                 if (result != null) {
                     System.out.println(result);
                 }
-            } catch (IllegalArgumentException e) {
+            } catch (IllegalArgumentException | PreservedKeywordException | ArithmeticException e) {
                 System.out.println(e.getMessage());
-            } catch (ArithmeticException e2) {
-                System.out.println(e2.getMessage());
-            } catch (PreservedKeywordException e3) {
-                System.out.println(e3.getMessage());
             }
         }
     }
