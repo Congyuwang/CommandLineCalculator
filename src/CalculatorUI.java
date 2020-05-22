@@ -114,6 +114,7 @@ public class CalculatorUI extends JFrame {
                             lastInput.input = inputField.getText();
                         }
                         mainOperation(round, previousLine, inputField.getText());
+                        inputField.requestFocus();
                         break;
                     case KeyEvent.VK_UP:
                         current.input = inputField.getText();
@@ -122,6 +123,7 @@ public class CalculatorUI extends JFrame {
                         }
                         inputGuide.setText(String.format("In[%d]:", current.index));
                         inputField.setText(current.input);
+                        inputField.requestFocus();
                         break;
                     case KeyEvent.VK_DOWN:
                         current.input = inputField.getText();
@@ -130,11 +132,11 @@ public class CalculatorUI extends JFrame {
                         }
                         inputGuide.setText(String.format("In[%d]:", current.index));
                         inputField.setText(current.input);
+                        inputField.requestFocus();
                         break;
                     default:
                         break;
                 }
-                inputField.requestFocus();
             }
         };
 
