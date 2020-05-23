@@ -8,9 +8,9 @@ Press enter to calculate result.
 
 Click help to see help.
 
-<h1>
+<h2>
     <center>Help Menu</center>
-</h1>
+</h2>
 <p>
     This is a simple calculator program that allows <i>variable definition</i>, and
     supports <i>basic functions</i> like exponential, logarithm, and square root.
