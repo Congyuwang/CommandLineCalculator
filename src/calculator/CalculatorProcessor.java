@@ -260,7 +260,7 @@ public class CalculatorProcessor {
                 throw new IllegalArgumentException("Invalid expression: illegal operators or input");
             }
             BigDecimal result = evaluate(input);
-            if (MINIMUM.compareTo(result) > 0) {
+            if (MINIMUM.compareTo(result.abs()) > 0) {
                 return BigDecimal.ZERO;
             }
             return evaluate(input).round(MathContext.DECIMAL64).stripTrailingZeros();
