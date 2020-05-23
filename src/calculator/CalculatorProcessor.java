@@ -58,12 +58,13 @@ public class CalculatorProcessor {
     private static final Pattern EVALUATION_PATTERN = Pattern.compile(EVALUATION);
     private static final Pattern ASSIGNMENT_PATTERN = Pattern.compile(ASSIGNMENT);
     private static final Pattern MAIN_PATTERN = Pattern.compile(COMBINED_REGEX);
-    private static final MathContext DECIMAL64 = MathContext.DECIMAL64;
+    private static final MathContext DECIMAL128 = MathContext.DECIMAL128;
+    private static final BigDecimal MINIMUM = BigDecimal.TEN.pow(-30);
     private final HashMap<String, BigDecimal> variables = new HashMap<>();
 
     public CalculatorProcessor() {
-        variables.put("e", BigDecimalMath.e(DECIMAL64));
-        variables.put("pi", BigDecimalMath.pi(DECIMAL64));
+        variables.put("e", BigDecimalMath.e(DECIMAL128));
+        variables.put("pi", BigDecimalMath.pi(DECIMAL128));
     }
 
     private enum Functions {
@@ -162,20 +163,20 @@ public class CalculatorProcessor {
     private BigDecimal binaryOperator(BigDecimal right, BigDecimal left, Operators o) {
         switch (o) {
             case DIVIDE:
-                return left.divide(right, DECIMAL64);
+                return left.divide(right, DECIMAL128);
             case REMAINDER:
-                return left.remainder(right, DECIMAL64);
+                return left.remainder(right, DECIMAL128);
             case MINUS:
-                return left.subtract(right, DECIMAL64);
+                return left.subtract(right, DECIMAL128);
             case PLUS:
-                return left.add(right, DECIMAL64);
+                return left.add(right, DECIMAL128);
             case MULTIPLY:
-                return left.multiply(right, DECIMAL64);
+                return left.multiply(right, DECIMAL128);
             case POWER:
-                if (right.remainder(BigDecimal.ONE, DECIMAL64).compareTo(BigDecimal.ZERO) == 0) {
-                    return left.pow(right.intValue(), DECIMAL64);
+                if (right.remainder(BigDecimal.ONE, DECIMAL128).compareTo(BigDecimal.ZERO) == 0) {
+                    return left.pow(right.intValue(), DECIMAL128);
                 }
-                return BigDecimalMath.pow(left, right, DECIMAL64);
+                return BigDecimalMath.pow(left, right, DECIMAL128);
             case LESS:
                 return left.compareTo(right) < 0 ? BigDecimal.ONE : BigDecimal.ZERO;
             case LESS_EQUAL:
@@ -200,23 +201,23 @@ public class CalculatorProcessor {
     private BigDecimal functions(BigDecimal input, Functions f) {
         switch (f) {
             case SQUARE_ROOT:
-                return BigDecimalMath.sqrt(input, DECIMAL64);
+                return BigDecimalMath.sqrt(input, DECIMAL128);
             case NATURAL_LOG:
-                return BigDecimalMath.log(input, DECIMAL64);
+                return BigDecimalMath.log(input, DECIMAL128);
             case LOG_TEN:
-                return BigDecimalMath.log10(input, DECIMAL64);
+                return BigDecimalMath.log10(input, DECIMAL128);
             case EXPONENT:
-                return BigDecimalMath.exp(input, DECIMAL64);
+                return BigDecimalMath.exp(input, DECIMAL128);
             case LOGICAL_NOT:
                 return input.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ONE : BigDecimal.ZERO;
             case NEGATE:
                 return input.negate();
             case SINE:
-                return BigDecimalMath.sin(input, DECIMAL64);
+                return BigDecimalMath.sin(input, DECIMAL128);
             case COSINE:
-                return BigDecimalMath.cos(input, DECIMAL64);
+                return BigDecimalMath.cos(input, DECIMAL128);
             case TANGENT:
-                return BigDecimalMath.tan(input, DECIMAL64);
+                return BigDecimalMath.tan(input, DECIMAL128);
             default:
                 return null;
         }
@@ -258,7 +259,11 @@ public class CalculatorProcessor {
             if (!isLegal.matches()) {
                 throw new IllegalArgumentException("Invalid expression: illegal operators or input");
             }
-            return evaluate(input);
+            BigDecimal result = evaluate(input);
+            if (MINIMUM.compareTo(result) > 0) {
+                return BigDecimal.ZERO;
+            }
+            return evaluate(input).round(MathContext.DECIMAL64).stripTrailingZeros();
         }
         return null;
     }

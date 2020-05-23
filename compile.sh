@@ -6,7 +6,7 @@ cd "$BASEDIR" || exit
 
 export JAVA_HOME=`/usr/libexec/java_home -v1.8`
 
-javac -d out/class/ -sourcepath src/ src/*.java src/**/*.java
+javac -d out/class/ -sourcepath lib/big-math-2.3.0-sources.jar:src/ src/*.java src/**/*.java
 
 mkdir out/resource/
 
