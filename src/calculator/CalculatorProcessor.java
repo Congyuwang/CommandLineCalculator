@@ -59,7 +59,7 @@ public class CalculatorProcessor {
     private static final Pattern ASSIGNMENT_PATTERN = Pattern.compile(ASSIGNMENT);
     private static final Pattern MAIN_PATTERN = Pattern.compile(COMBINED_REGEX);
     private static final MathContext DECIMAL128 = MathContext.DECIMAL128;
-    private static final BigDecimal MINIMUM = BigDecimal.TEN.pow(-30);
+    private static final BigDecimal MINIMUM = BigDecimal.ONE.movePointLeft(30);
     private final HashMap<String, BigDecimal> variables = new HashMap<>();
 
     public CalculatorProcessor() {
@@ -178,17 +178,17 @@ public class CalculatorProcessor {
                 }
                 return BigDecimalMath.pow(left, right, DECIMAL128);
             case LESS:
-                return left.compareTo(right) < 0 ? BigDecimal.ONE : BigDecimal.ZERO;
+                return right.subtract(left).compareTo(MINIMUM) > 0 ? BigDecimal.ONE : BigDecimal.ZERO;
             case LESS_EQUAL:
-                return left.compareTo(right) <= 0 ? BigDecimal.ONE : BigDecimal.ZERO;
+                return left.subtract(right).compareTo(MINIMUM) < 0 ? BigDecimal.ONE : BigDecimal.ZERO;
             case GREATER:
-                return left.compareTo(right) > 0 ? BigDecimal.ONE : BigDecimal.ZERO;
+                return left.subtract(right).compareTo(MINIMUM) > 0 ? BigDecimal.ONE : BigDecimal.ZERO;
             case GREATER_EQUAL:
-                return left.compareTo(right) >= 0 ? BigDecimal.ONE : BigDecimal.ZERO;
+                return right.subtract(left).compareTo(MINIMUM) < 0 ? BigDecimal.ONE : BigDecimal.ZERO;
             case EQUAL:
-                return left.compareTo(right) == 0 ? BigDecimal.ONE : BigDecimal.ZERO;
+                return right.subtract(left).abs().compareTo(MINIMUM) < 0 ? BigDecimal.ONE : BigDecimal.ZERO;
             case NOT_EQUAL:
-                return left.compareTo(right) == 0 ? BigDecimal.ZERO : BigDecimal.ONE;
+                return right.subtract(left).abs().compareTo(MINIMUM) > 0 ? BigDecimal.ZERO : BigDecimal.ONE;
             case AND:
                 return left.compareTo(BigDecimal.ZERO) == 0 || right.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO : BigDecimal.ONE;
             case OR:
