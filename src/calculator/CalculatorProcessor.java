@@ -69,9 +69,10 @@ public class CalculatorProcessor {
 
     private enum Functions {
         SQUARE_ROOT, NATURAL_LOG, LOG_TEN, EXPONENT, LOGICAL_NOT, NEGATE, SINE,
-        COSINE, TANGENT;
+        COSINE, TANGENT, ARCSINE, ARCCOSINE, ARCTANGENT, HSINE, HCOSINE, HTANGENT;
 
-        private static final Set<String> functionNames = new HashSet<>(Arrays.asList("sqrt", "log", "log10", "exp", "b-", "!", "sin", "cos", "tan"));
+        private static final Set<String> functionNames = new HashSet<>(Arrays.asList("sqrt", "log", "log10", "exp", "b-", "!", "sin", "cos", "tan", "asin", "acos", "atan",
+                "sinh", "cosh", "tanh"));
 
         public static boolean isFunctionName(String s) {
             return s != null && functionNames.contains(s);
@@ -97,6 +98,18 @@ public class CalculatorProcessor {
                     return COSINE;
                 case "tan":
                     return TANGENT;
+                case "asin":
+                    return ARCSINE;
+                case "acos":
+                    return ARCCOSINE;
+                case "atan":
+                    return ARCTANGENT;
+                case "sinh":
+                    return HSINE;
+                case "cosh":
+                    return HCOSINE;
+                case "tanh":
+                    return HTANGENT;
                 default:
                     return null;
             }
@@ -218,6 +231,18 @@ public class CalculatorProcessor {
                 return BigDecimalMath.cos(input, DECIMAL128);
             case TANGENT:
                 return BigDecimalMath.tan(input, DECIMAL128);
+            case ARCSINE:
+                return BigDecimalMath.asin(input, DECIMAL128);
+            case ARCCOSINE:
+                return BigDecimalMath.acos(input, DECIMAL128);
+            case ARCTANGENT:
+                return BigDecimalMath.atan(input, DECIMAL128);
+            case HSINE:
+                return BigDecimalMath.sinh(input, DECIMAL128);
+            case HCOSINE:
+                return BigDecimalMath.cosh(input, DECIMAL128);
+            case HTANGENT:
+                return BigDecimalMath.tanh(input, DECIMAL128);
             default:
                 return null;
         }
