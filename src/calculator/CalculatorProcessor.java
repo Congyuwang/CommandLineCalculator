@@ -11,6 +11,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.math.BigDecimal;
 import java.math.MathContext;
+import ch.obermuhlner.math.big.BigDecimalMath;
 
 /**
  * The Calculator class allows simple calculations and variable assignments.
@@ -57,12 +58,12 @@ public class CalculatorProcessor {
     private static final Pattern EVALUATION_PATTERN = Pattern.compile(EVALUATION);
     private static final Pattern ASSIGNMENT_PATTERN = Pattern.compile(ASSIGNMENT);
     private static final Pattern MAIN_PATTERN = Pattern.compile(COMBINED_REGEX);
-    private static final MathContext DECIMAL32 = MathContext.DECIMAL32;
+    private static final MathContext DECIMAL64 = MathContext.DECIMAL64;
     private final HashMap<String, BigDecimal> variables = new HashMap<>();
 
     public CalculatorProcessor() {
-        variables.put("e", BigDecimal.valueOf(Math.E));
-        variables.put("pi", BigDecimal.valueOf(Math.PI));
+        variables.put("e", BigDecimalMath.e(DECIMAL64));
+        variables.put("pi", BigDecimalMath.pi(DECIMAL64));
     }
 
     private enum Functions {
@@ -161,20 +162,20 @@ public class CalculatorProcessor {
     private BigDecimal binaryOperator(BigDecimal right, BigDecimal left, Operators o) {
         switch (o) {
             case DIVIDE:
-                return left.divide(right, DECIMAL32);
+                return left.divide(right, DECIMAL64);
             case REMAINDER:
-                return left.remainder(right, DECIMAL32);
+                return left.remainder(right, DECIMAL64);
             case MINUS:
-                return left.subtract(right, DECIMAL32);
+                return left.subtract(right, DECIMAL64);
             case PLUS:
-                return left.add(right, DECIMAL32);
+                return left.add(right, DECIMAL64);
             case MULTIPLY:
-                return left.multiply(right, DECIMAL32);
+                return left.multiply(right, DECIMAL64);
             case POWER:
-                if (right.remainder(BigDecimal.ONE, DECIMAL32).compareTo(BigDecimal.ZERO) == 0) {
-                    return left.pow(right.intValue(), DECIMAL32);
+                if (right.remainder(BigDecimal.ONE, DECIMAL64).compareTo(BigDecimal.ZERO) == 0) {
+                    return left.pow(right.intValue(), DECIMAL64);
                 }
-                return BigDecimal.valueOf(Math.pow(left.doubleValue(), right.doubleValue()));
+                return BigDecimalMath.pow(left, right, DECIMAL64);
             case LESS:
                 return left.compareTo(right) < 0 ? BigDecimal.ONE : BigDecimal.ZERO;
             case LESS_EQUAL:
@@ -199,23 +200,23 @@ public class CalculatorProcessor {
     private BigDecimal functions(BigDecimal input, Functions f) {
         switch (f) {
             case SQUARE_ROOT:
-                return BigDecimal.valueOf(Math.sqrt(input.doubleValue()));
+                return BigDecimalMath.sqrt(input, DECIMAL64);
             case NATURAL_LOG:
-                return BigDecimal.valueOf(Math.log(input.doubleValue()));
+                return BigDecimalMath.log(input, DECIMAL64);
             case LOG_TEN:
-                return BigDecimal.valueOf(Math.log10(input.doubleValue()));
+                return BigDecimalMath.log10(input, DECIMAL64);
             case EXPONENT:
-                return BigDecimal.valueOf(Math.exp(input.doubleValue()));
+                return BigDecimalMath.exp(input, DECIMAL64);
             case LOGICAL_NOT:
                 return input.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ONE : BigDecimal.ZERO;
             case NEGATE:
                 return input.negate();
             case SINE:
-                return BigDecimal.valueOf(Math.sin(input.doubleValue()));
+                return BigDecimalMath.sin(input, DECIMAL64);
             case COSINE:
-                return BigDecimal.valueOf(Math.cos(input.doubleValue()));
+                return BigDecimalMath.cos(input, DECIMAL64);
             case TANGENT:
-                return BigDecimal.valueOf(Math.tan(input.doubleValue()));
+                return BigDecimalMath.tan(input, DECIMAL64);
             default:
                 return null;
         }
