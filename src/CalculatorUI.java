@@ -4,7 +4,8 @@ import java.awt.event.*;
 import calculator.CalculatorProcessor;
 import calculator.PreservedKeywordException;
 
-// TODO: add variable list
+// TODO: add variable list printer
+// TODO: add save and load function
 public class CalculatorUI extends JFrame {
 
     private final SpringLayout frameLayout;
