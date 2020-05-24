@@ -29,7 +29,7 @@ Must start with a latin letter, and follows latin letters or numbers and undersc
 - ```^``` (power)
 - ```*, /, %``` (multiply, divide, remainder)
 - ```+, -``` (plus, minus)
-- ```&gt; &lt; &gt;= &lt;=``` (greater, less, greater equal, less equal)
+- ```>, <, >=, <=``` (greater, less, greater equal, less equal)
 - ```==, !=``` (equals, not equals)
 - ```&``` (logical_and)
 - ```|``` (logical_or)
