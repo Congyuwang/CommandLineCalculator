@@ -34,7 +34,9 @@ import ch.obermuhlner.math.big.BigDecimalMath;
  * <p>
  * Supported <em>functions</em>: {@code sqrt()} (square root), {@code exp()}
  * (exponent), {@code log()} (natural logarithm), {@code log10()} (logarithm
- * base 10), {@code sin()}, {@code cos()}, {@code tan()}
+ * base 10), {@code log2()} (logarithm base 2), {@code sin()}, {@code cos()},
+ * {@code tan()}, {@code asin()}, {@code acos()}, {@code atan()},
+ * {@code sinh()}, {@code cosh()}, {@code tanh()}
  * </p>
  * <p>
  * Predefined <em>variables</em>: {@code e} and {@code pi}, which can be
@@ -68,10 +70,10 @@ public class CalculatorProcessor {
     }
 
     private enum Functions {
-        SQUARE_ROOT, NATURAL_LOG, LOG_TEN, EXPONENT, LOGICAL_NOT, NEGATE, SINE,
+        SQUARE_ROOT, NATURAL_LOG, LOG_TEN, LOG_TWO, EXPONENT, LOGICAL_NOT, NEGATE, SINE,
         COSINE, TANGENT, ARCSINE, ARCCOSINE, ARCTANGENT, HSINE, HCOSINE, HTANGENT;
 
-        private static final Set<String> functionNames = new HashSet<>(Arrays.asList("sqrt", "log", "log10", "exp", "b-", "!", "sin", "cos", "tan", "asin", "acos", "atan",
+        private static final Set<String> functionNames = new HashSet<>(Arrays.asList("sqrt", "log", "log10", "log2", "exp", "b-", "!", "sin", "cos", "tan", "asin", "acos", "atan",
                 "sinh", "cosh", "tanh"));
 
         public static boolean isFunctionName(String s) {
@@ -86,6 +88,8 @@ public class CalculatorProcessor {
                     return NATURAL_LOG;
                 case "log10":
                     return LOG_TEN;
+                case "log2":
+                    return LOG_TWO;
                 case "exp":
                     return EXPONENT;
                 case "b-":
@@ -219,6 +223,8 @@ public class CalculatorProcessor {
                 return BigDecimalMath.log(input, DECIMAL128);
             case LOG_TEN:
                 return BigDecimalMath.log10(input, DECIMAL128);
+            case LOG_TWO:
+                return BigDecimalMath.log2(input, DECIMAL128);
             case EXPONENT:
                 return BigDecimalMath.exp(input, DECIMAL128);
             case LOGICAL_NOT:
