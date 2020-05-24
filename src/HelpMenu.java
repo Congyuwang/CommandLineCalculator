@@ -1,23 +1,21 @@
 import javax.swing.*;
 import java.awt.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.io.IOException;
+import java.util.Scanner;
 
 public class HelpMenu {
 
     private static final JTextPane helpText = new JTextPane() {
         private static final long serialVersionUID = 8773823648370901685L;
         {
+            Scanner scanner = new Scanner(getClass().getResourceAsStream("resource/HelpMenu.html"));
+            StringBuilder stringBuilder = new StringBuilder();
             setBackground(Color.WHITE);
             setForeground(Color.BLACK);
             setContentType("text/html");
-            try {
-                setText(new String(Files.readAllBytes(Paths.get("resource/HelpMenu.html"))));
-            } catch (IOException e) {
-                e.printStackTrace();
-                System.exit(-1);
+            while(scanner.hasNext()) {
+                stringBuilder.append(scanner.nextLine());
             }
+            setText(stringBuilder.toString());
             setEditable(false);
         }
     };
