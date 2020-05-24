@@ -253,10 +253,12 @@ public class CalculatorProcessor {
      * == 0). Support operations {@code + - * / % ^ == != >= <= > < && || !}
      *
      * @param input the input expression
-     * @return null if it is an ASSIGNMENT_PATTERN, or return the result
+     * @return null if it is an ASSIGNMENT_PATTERN, or return the result as String.
+     *         Force to use plain output if the absolute value of the result is
+     *         between 10^17 and 10^-10.
      * @throws IllegalArgumentException if the expression is invalid.
      */
-    public BigDecimal expression(String input) {
+    public String expression(String input) {
         Matcher isAssignment = ASSIGNMENT_PATTERN.matcher(input);
         if (isAssignment.find()) {
             String LHS = isAssignment.group("variable").replaceAll("\\s*", "");
@@ -286,9 +288,14 @@ public class CalculatorProcessor {
             }
             BigDecimal result = evaluate(input);
             if (MINIMUM.compareTo(result.abs()) > 0) {
-                return BigDecimal.ZERO;
+                return "0";
             }
-            return evaluate(input).round(MathContext.DECIMAL64).stripTrailingZeros();
+            BigDecimal plainDisplayUpper = BigDecimal.ONE.movePointRight(17);
+            BigDecimal plainDisplayLower = BigDecimal.ONE.movePointLeft(10);
+            if (plainDisplayUpper.compareTo(result.abs()) > 0 && plainDisplayLower.compareTo(result.abs()) < 0) {
+                return result.round(MathContext.DECIMAL64).stripTrailingZeros().toPlainString();
+            }
+            return result.round(MathContext.DECIMAL64).stripTrailingZeros().toString();
         }
         return null;
     }

@@ -1,4 +1,3 @@
-import java.math.BigDecimal;
 import java.util.Scanner;
 import calculator.PreservedKeywordException;
 import calculator.CalculatorProcessor;
@@ -54,7 +53,7 @@ public class CalculatorCommandLine {
                 continue;
             }
             try {
-                BigDecimal result = calculator.expression(nextLine);
+                String result = calculator.expression(nextLine);
                 if (result != null) {
                     System.out.println(result);
                 }
