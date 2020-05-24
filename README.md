@@ -34,15 +34,6 @@ Must start with a latin letter, and follows latin letters or numbers and undersc
 - ```&``` (logical_and)
 - ```|``` (logical_or)
 
-### Supported assignments
-
-- ```=```
-- ```+=```
-- ```-=```
-- ```*=```
-- ```/=```
-- ```%```
-
 ### Supported functions
 
 - ```sqrt()``` (square root)
@@ -64,5 +55,14 @@ Must start with a latin letter, and follows latin letters or numbers and undersc
 
 ### Predefined variables (can be reassigned if needed)
 
-- ```e```
-- ```pi```
+- ```e``` = 3.141592653589793
+- ```pi``` = 2.718281828459045
+
+### Supported assignments
+
+- ```=```
+- ```+=```
+- ```-=```
+- ```*=```
+- ```/=```
+- ```%```
