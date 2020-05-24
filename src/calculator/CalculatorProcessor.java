@@ -36,7 +36,8 @@ import ch.obermuhlner.math.big.BigDecimalMath;
  * (exponent), {@code log()} (natural logarithm), {@code log10()} (logarithm
  * base 10), {@code log2()} (logarithm base 2), {@code sin()}, {@code cos()},
  * {@code tan()}, {@code asin()}, {@code acos()}, {@code atan()},
- * {@code sinh()}, {@code cosh()}, {@code tanh()}
+ * {@code sinh()}, {@code cosh()}, {@code tanh()}, {@code gamma()} (gamma
+ * function), {@code factorial()} (factorial function).
  * </p>
  * <p>
  * Predefined <em>variables</em>: {@code e} and {@code pi}, which can be
@@ -69,12 +70,13 @@ public class CalculatorProcessor {
         variables.put("pi", BigDecimalMath.pi(DECIMAL128));
     }
 
+    // TODO: support functions of multiple parameters
     private enum Functions {
         SQUARE_ROOT, NATURAL_LOG, LOG_TEN, LOG_TWO, EXPONENT, LOGICAL_NOT, NEGATE, SINE,
-        COSINE, TANGENT, ARCSINE, ARCCOSINE, ARCTANGENT, HSINE, HCOSINE, HTANGENT;
+        COSINE, TANGENT, ARCSINE, ARCCOSINE, ARCTANGENT, HSINE, HCOSINE, HTANGENT, GAMMA, FACTORIAL;
 
         private static final Set<String> functionNames = new HashSet<>(Arrays.asList("sqrt", "log", "log10", "log2", "exp", "b-", "!", "sin", "cos", "tan", "asin", "acos", "atan",
-                "sinh", "cosh", "tanh"));
+                "sinh", "cosh", "tanh", "gamma", "factorial"));
 
         public static boolean isFunctionName(String s) {
             return s != null && functionNames.contains(s);
@@ -114,6 +116,11 @@ public class CalculatorProcessor {
                     return HCOSINE;
                 case "tanh":
                     return HTANGENT;
+                case "gamma":
+                    return GAMMA;
+                case "factorial":
+                    return FACTORIAL;
+                // TODO: add random number generator
                 default:
                     return null;
             }
@@ -249,6 +256,10 @@ public class CalculatorProcessor {
                 return BigDecimalMath.cosh(input, DECIMAL128);
             case HTANGENT:
                 return BigDecimalMath.tanh(input, DECIMAL128);
+            case GAMMA:
+                return BigDecimalMath.gamma(input, DECIMAL128);
+            case FACTORIAL:
+                return BigDecimalMath.factorial(input, DECIMAL128);
             default:
                 return null;
         }

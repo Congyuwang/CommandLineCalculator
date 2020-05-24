@@ -4,6 +4,7 @@ import java.awt.event.*;
 import calculator.CalculatorProcessor;
 import calculator.PreservedKeywordException;
 
+// TODO: add variable list
 public class CalculatorUI extends JFrame {
 
     private final SpringLayout frameLayout;
