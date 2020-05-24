@@ -63,7 +63,7 @@ Click help to see help.
     <font face="Courier">-=</font>,
     <font face="Courier">*=</font>,
     <font face="Courier">/=</font>,
-    %= assignments</p>
+    <font face="Courier">%=</font> assignments</p>
 <p><b>
         <font size="+0.5">Supported functions</font>
     </b>:
@@ -75,7 +75,16 @@ Click help to see help.
         <font face="Courier">exp()</font> (exponent)
     </li>
     <li>
+        <font face="Courier">gamma()</font> (gamma function)
+    </li>
+    <li>
+        <font face="Courier">factorial()</font> (factorial function)
+    </li>
+    <li>
         <font face="Courier">log()</font> (natural logarithm)
+    </li>
+    <li>
+        <font face="Courier">log2()</font> (logarithm base 2)
     </li>
     <li>
         <font face="Courier">log10()</font> (logarithm base 10)
@@ -126,4 +135,3 @@ Click help to see help.
         <font face="Courier">DOWN_ARROW</font> (next input)
     </li>
 </ul><br>
-
