@@ -54,7 +54,7 @@ public class CalculatorCommandLine {
                 continue;
             }
             try {
-                BigDecimal result = calculator.expression(nextLine);
+                String result = calculator.expression(nextLine);
                 if (result != null) {
                     System.out.println(result);
                 }

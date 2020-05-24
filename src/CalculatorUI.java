@@ -162,8 +162,7 @@ public class CalculatorUI extends JFrame {
             round[0]++;
             String output;
             try {
-                BigDecimal result = calculator.expression(inputString);
-                output = result == null ? null : result.toString();
+                output = calculator.expression(inputString);
             } catch (IllegalArgumentException | PreservedKeywordException | ArithmeticException e) {
                 output = e.getMessage();
             }
