@@ -15,3 +15,5 @@ cp resource/HelpMenu.html out/resource/
 cd "$BASEDIR/out/class/" || exit
 
 jar cfe ../calculator.jar Calculator *
+
+cp ../calculator.jar ~/Desktop/
