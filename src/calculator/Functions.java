@@ -115,8 +115,9 @@ enum Functions {
         @Override
         public BigDecimal call(BigDecimal p, BigDecimal q, MathContextWithMin context) {
             return BigDecimalMath.gamma(p, context.getMathContext())
-                    .multiply(BigDecimalMath.gamma(p, context.getMathContext()), context.getMathContext())
-                    .divide(BigDecimalMath.gamma(p.add(q, context.getMathContext()), context.getMathContext()));
+                    .divide(BigDecimalMath.gamma(p.add(q, context.getMathContext()), context.getMathContext()),
+                            context.getMathContext())
+                    .multiply(BigDecimalMath.gamma(q, context.getMathContext()), context.getMathContext());
         }
     });
 
