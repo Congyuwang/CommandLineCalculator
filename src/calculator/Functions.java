@@ -111,6 +111,13 @@ enum Functions {
         public BigDecimal call(BigDecimal x, BigDecimal n, MathContextWithMin context) {
             return BigDecimalMath.pow(x, n, context.getMathContext());
         }
+    }), BETA("beta", new Function() {
+        @Override
+        public BigDecimal call(BigDecimal p, BigDecimal q, MathContextWithMin context) {
+            return BigDecimalMath.gamma(p, context.getMathContext())
+                    .multiply(BigDecimalMath.gamma(p, context.getMathContext()), context.getMathContext())
+                    .divide(BigDecimalMath.gamma(p.add(q, context.getMathContext()), context.getMathContext()));
+        }
     });
 
     private final String name;
