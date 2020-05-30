@@ -8,5 +8,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="big-math-2.3.0" level="project" />
+    <orderEntry type="library" name="commons-math3-3.6" level="project" />
   </component>
 </module>
