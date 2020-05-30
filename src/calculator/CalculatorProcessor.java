@@ -158,7 +158,7 @@ public class CalculatorProcessor {
                         cache.push(number);
                     }
                 } else {
-                    cache.push(new BigDecimal(temp));
+                    cache.push(new BigDecimal(temp, MATH_CONTEXT_WITH_MIN.getMathContext()));
                 }
             }
             System.out.println("postFix" + postFix);
