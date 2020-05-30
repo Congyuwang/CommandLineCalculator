@@ -19,23 +19,18 @@ import ch.obermuhlner.math.big.BigDecimalMath;
  * {@code alpha__}.
  * </p>
  * <p>
- * Supported <em>operators</em> (in descending order of priority): {@code ()}
- * (parenthesis), {@code !, +, -} (logical_not, unary positive, unary negative),
- * {@code ^} (power) {@code *, /, %} (multiply, divide, remainder), {@code +, -}
- * (plus, minus), {@code > < >= <=} (greater, less, greater equal, less equal),
- * {@code ==, !=} (equals, not equals), {@code &} (logical_and), {@code |}
- * logical_or.
+ * Supported <em>unary operators</em>: {@code !, +, -} (logical_not, unary
+ * positive, unary negative).
  * </p>
  * <p>
- * Supported <em>assignments</em>: {@code =, +=, -=, *=, /=, %=} assignments
+ * Supported <em>binary operators</em>: defined in
+ * {@link calculator#BinaryOperators}.
  * </p>
  * <p>
- * Supported <em>functions</em>: {@code sqrt()} (square root), {@code exp()}
- * (exponent), {@code log()} (natural logarithm), {@code log10()} (logarithm
- * base 10), {@code log2()} (logarithm base 2), {@code sin()}, {@code cos()},
- * {@code tan()}, {@code asin()}, {@code acos()}, {@code atan()},
- * {@code sinh()}, {@code cosh()}, {@code tanh()}, {@code gamma()} (gamma
- * function), {@code factorial()} (factorial function).
+ * Supported <em>assignments</em>: {@code =, +=, -=, *=, /=, %=, ^=} assignments
+ * </p>
+ * <p>
+ * Supported <em>functions</em>: defined in {@link calculator#Functions}.
  * </p>
  * <p>
  * Predefined <em>variables</em>: {@code e} and {@code pi}, which can be
@@ -56,7 +51,7 @@ public class CalculatorProcessor {
                                                  "(?<operator>" + OPERATORS + ")\\s*";
     private static final String EVALUATION = "(\\||&|%|!=|==|>=|<=|[a-zA-Z0-9_.!+\\-*/^()>< ,])*";
     private static final String ASSIGNMENT = "^\\s*(?<variable>" + VARIABLE + ")\\s*" +
-                                                  "(?<assignment>[+\\-*/%]?)=\\s*" +
+                                                  "(?<assignment>[+\\-*/%^]?)=\\s*" +
                                                   "(?<evaluation>" + EVALUATION + ")\\s*$";
     private static final Pattern EVALUATION_PATTERN = Pattern.compile(EVALUATION);
     private static final Pattern ASSIGNMENT_PATTERN = Pattern.compile(ASSIGNMENT);
@@ -89,7 +84,7 @@ public class CalculatorProcessor {
             String assignment = isAssignment.group("assignment");
             String RHS = isAssignment.group("evaluation");
             switch (assignment) {
-                case "+": case "-": case "*": case "/": case "%":
+                case "+": case "-": case "*": case "/": case "%": case "^":
                     if (variables.containsKey(LHS)) {
                         variables.put(LHS, BinaryOperators.of(assignment).call(variables.get(LHS), evaluate(RHS), MATH_CONTEXT_WITH_MIN));
                     } else {

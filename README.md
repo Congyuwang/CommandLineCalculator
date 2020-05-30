@@ -62,9 +62,10 @@ Must start with a latin letter, and follows latin letters or numbers and undersc
 
 ### Supported assignments
 
-- ```=```
-- ```+=```
-- ```-=```
-- ```*=```
-- ```/=```
-- ```%```
+- ```=``` normal assignment
+- ```+=``` add
+- ```-=``` subtract
+- ```*=``` multiply
+- ```/=``` divide
+- ```%=``` remainder
+- ```^=``` power
