@@ -53,6 +53,7 @@ public class CalculatorProcessor {
     private static final String ASSIGNMENT = "^\\s*(?<variable>" + VARIABLE + ")\\s*" +
                                                   "(?<assignment>[+\\-*/%^]?)=\\s*" +
                                                   "(?<evaluation>" + EVALUATION + ")\\s*$";
+    private static final Pattern VARIABLE_PATTERN = Pattern.compile("^(?<negate>-)?(?<variable>" + VARIABLE + ")$");
     private static final Pattern EVALUATION_PATTERN = Pattern.compile(EVALUATION);
     private static final Pattern ASSIGNMENT_PATTERN = Pattern.compile(ASSIGNMENT);
     private static final Pattern MAIN_PATTERN = Pattern.compile(COMBINED_REGEX);
@@ -118,7 +119,6 @@ public class CalculatorProcessor {
     private BigDecimal evaluate(String input) {
         Deque<String> postFix = toPosFix(input);
         Deque<BigDecimal> cache = new LinkedList<>();
-        // TODO: change var dereferencing place
         System.out.println(">>>>eval:\n");
         while (!postFix.isEmpty()) {
             String temp = postFix.pollLast();
@@ -149,7 +149,17 @@ public class CalculatorProcessor {
                     throw new IllegalArgumentException("Invalid expression: fail to evaluate operator");
                 }
             } else {
-                cache.push(new BigDecimal(temp));
+                Matcher isVariable = VARIABLE_PATTERN.matcher(temp);
+                if(isVariable.matches()) {
+                    BigDecimal number = variables.get(isVariable.group("variable"));
+                    if (isVariable.group("negate") != null) {
+                        cache.push(number.negate());
+                    } else {
+                        cache.push(number);
+                    }
+                } else {
+                    cache.push(new BigDecimal(temp));
+                }
             }
             System.out.println("postFix" + postFix);
             System.out.println("deCache" + cache);
@@ -305,10 +315,10 @@ public class CalculatorProcessor {
                             postFix.push(variables.get(capturedVariableOrFunction).compareTo(BigDecimal.ZERO) == 0 ? "1" : "0");
                             logicalNot = false;
                         } else if (negativeSign) {
-                            postFix.push("-" + variables.get(capturedVariableOrFunction).toString());
+                            postFix.push("-" + capturedVariableOrFunction);
                             negativeSign = false;
                         } else {
-                            postFix.push(variables.get(capturedVariableOrFunction).toString());
+                            postFix.push(capturedVariableOrFunction);
                         }
                         previousInput = "operand";
                     } else {
