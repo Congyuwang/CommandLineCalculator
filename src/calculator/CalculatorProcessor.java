@@ -1,12 +1,9 @@
 package calculator;
 
 import java.util.ArrayDeque;
-import java.util.Arrays;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.NoSuchElementException;
-import java.util.Set;
-import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.math.BigDecimal;
@@ -61,208 +58,12 @@ public class CalculatorProcessor {
     private static final Pattern EVALUATION_PATTERN = Pattern.compile(EVALUATION);
     private static final Pattern ASSIGNMENT_PATTERN = Pattern.compile(ASSIGNMENT);
     private static final Pattern MAIN_PATTERN = Pattern.compile(COMBINED_REGEX);
-    private static final MathContext DECIMAL128 = MathContext.DECIMAL128;
-    private static final BigDecimal MINIMUM = BigDecimal.ONE.movePointLeft(30);
+    private static final MathContextWithMin MATH_CONTEXT_WITH_MIN = new MathContextWithMin(MathContext.DECIMAL128, BigDecimal.ONE.movePointLeft(30));
     private final HashMap<String, BigDecimal> variables = new HashMap<>();
 
     public CalculatorProcessor() {
-        variables.put("e", BigDecimalMath.e(DECIMAL128));
-        variables.put("pi", BigDecimalMath.pi(DECIMAL128));
-    }
-
-    // TODO: support functions of multiple parameters
-    private enum Functions {
-        SQUARE_ROOT, NATURAL_LOG, LOG_TEN, LOG_TWO, EXPONENT, LOGICAL_NOT, NEGATE, SINE,
-        COSINE, TANGENT, ARCSINE, ARCCOSINE, ARCTANGENT, HSINE, HCOSINE, HTANGENT, GAMMA, FACTORIAL;
-
-        private static final Set<String> functionNames = new HashSet<>(Arrays.asList("sqrt", "log", "log10", "log2", "exp", "b-", "!", "sin", "cos", "tan", "asin", "acos", "atan",
-                "sinh", "cosh", "tanh", "gamma", "factorial"));
-
-        public static boolean isFunctionName(String s) {
-            return s != null && functionNames.contains(s);
-        }
-
-        public static Functions of(String c) {
-            switch (c) {
-                case "sqrt":
-                    return SQUARE_ROOT;
-                case "log":
-                    return NATURAL_LOG;
-                case "log10":
-                    return LOG_TEN;
-                case "log2":
-                    return LOG_TWO;
-                case "exp":
-                    return EXPONENT;
-                case "b-":
-                    return NEGATE;
-                case "!":
-                    return LOGICAL_NOT;
-                case "sin":
-                    return SINE;
-                case "cos":
-                    return COSINE;
-                case "tan":
-                    return TANGENT;
-                case "asin":
-                    return ARCSINE;
-                case "acos":
-                    return ARCCOSINE;
-                case "atan":
-                    return ARCTANGENT;
-                case "sinh":
-                    return HSINE;
-                case "cosh":
-                    return HCOSINE;
-                case "tanh":
-                    return HTANGENT;
-                case "gamma":
-                    return GAMMA;
-                case "factorial":
-                    return FACTORIAL;
-                // TODO: add random number generator
-                default:
-                    return null;
-            }
-        }
-    }
-
-    private enum Operators {
-        OR(-8), AND(-7), NOT_EQUAL(-6), EQUAL(-6), GREATER(-4), LESS(-4), LESS_EQUAL(-4), GREATER_EQUAL(-4),
-        PLUS(-3), MINUS(-3), MULTIPLY(-2), DIVIDE(-2), REMAINDER(-2), POWER(-1), UNKNOWN(-100);
-
-        private final int priority;
-
-        Operators(int p) {
-            priority = p;
-        }
-
-        private static final Set<String> binaryOperators = new HashSet<>(Arrays.asList("+", "-", "*", "/", "<", "<=", ">", ">=", "==", "!=",
-                "^", "%", "&", "|"));
-
-        public static boolean isBinaryOperator(String s) {
-            return s != null && binaryOperators.contains(s);
-        }
-
-        public static Operators of(String c) {
-            switch (c) {
-                case "+":
-                    return PLUS;
-                case "-":
-                    return MINUS;
-                case "*":
-                    return MULTIPLY;
-                case "/":
-                    return DIVIDE;
-                case "<":
-                    return LESS;
-                case "<=":
-                    return LESS_EQUAL;
-                case ">":
-                    return GREATER;
-                case ">=":
-                    return GREATER_EQUAL;
-                case "==":
-                    return EQUAL;
-                case "!=":
-                    return NOT_EQUAL;
-                case "^":
-                    return POWER;
-                case "%":
-                    return REMAINDER;
-                case "&":
-                    return AND;
-                case "|":
-                    return OR;
-                default:
-                    return UNKNOWN;
-            }
-        }
-
-        public final int comparePriority(Operators o) {
-            return this.priority - o.priority;
-        }
-    }
-
-    private BigDecimal binaryOperator(BigDecimal right, BigDecimal left, Operators o) {
-        switch (o) {
-            case DIVIDE:
-                return left.divide(right, DECIMAL128);
-            case REMAINDER:
-                return left.remainder(right, DECIMAL128);
-            case MINUS:
-                return left.subtract(right, DECIMAL128);
-            case PLUS:
-                return left.add(right, DECIMAL128);
-            case MULTIPLY:
-                return left.multiply(right, DECIMAL128);
-            case POWER:
-                if (right.remainder(BigDecimal.ONE, DECIMAL128).compareTo(BigDecimal.ZERO) == 0) {
-                    return left.pow(right.intValue(), DECIMAL128);
-                }
-                return BigDecimalMath.pow(left, right, DECIMAL128);
-            case LESS:
-                return right.subtract(left).compareTo(MINIMUM) > 0 ? BigDecimal.ONE : BigDecimal.ZERO;
-            case LESS_EQUAL:
-                return left.subtract(right).compareTo(MINIMUM) < 0 ? BigDecimal.ONE : BigDecimal.ZERO;
-            case GREATER:
-                return left.subtract(right).compareTo(MINIMUM) > 0 ? BigDecimal.ONE : BigDecimal.ZERO;
-            case GREATER_EQUAL:
-                return right.subtract(left).compareTo(MINIMUM) < 0 ? BigDecimal.ONE : BigDecimal.ZERO;
-            case EQUAL:
-                return right.subtract(left).abs().compareTo(MINIMUM) < 0 ? BigDecimal.ONE : BigDecimal.ZERO;
-            case NOT_EQUAL:
-                return right.subtract(left).abs().compareTo(MINIMUM) > 0 ? BigDecimal.ZERO : BigDecimal.ONE;
-            case AND:
-                return left.compareTo(BigDecimal.ZERO) == 0 || right.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO : BigDecimal.ONE;
-            case OR:
-                return left.compareTo(BigDecimal.ZERO) == 0 && right.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO : BigDecimal.ONE;
-            default:
-                return null;
-        }
-    }
-
-    private BigDecimal functions(BigDecimal input, Functions f) {
-        switch (f) {
-            case SQUARE_ROOT:
-                return BigDecimalMath.sqrt(input, DECIMAL128);
-            case NATURAL_LOG:
-                return BigDecimalMath.log(input, DECIMAL128);
-            case LOG_TEN:
-                return BigDecimalMath.log10(input, DECIMAL128);
-            case LOG_TWO:
-                return BigDecimalMath.log2(input, DECIMAL128);
-            case EXPONENT:
-                return BigDecimalMath.exp(input, DECIMAL128);
-            case LOGICAL_NOT:
-                return input.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ONE : BigDecimal.ZERO;
-            case NEGATE:
-                return input.negate();
-            case SINE:
-                return BigDecimalMath.sin(input, DECIMAL128);
-            case COSINE:
-                return BigDecimalMath.cos(input, DECIMAL128);
-            case TANGENT:
-                return BigDecimalMath.tan(input, DECIMAL128);
-            case ARCSINE:
-                return BigDecimalMath.asin(input, DECIMAL128);
-            case ARCCOSINE:
-                return BigDecimalMath.acos(input, DECIMAL128);
-            case ARCTANGENT:
-                return BigDecimalMath.atan(input, DECIMAL128);
-            case HSINE:
-                return BigDecimalMath.sinh(input, DECIMAL128);
-            case HCOSINE:
-                return BigDecimalMath.cosh(input, DECIMAL128);
-            case HTANGENT:
-                return BigDecimalMath.tanh(input, DECIMAL128);
-            case GAMMA:
-                return BigDecimalMath.gamma(input, DECIMAL128);
-            case FACTORIAL:
-                return BigDecimalMath.factorial(input, DECIMAL128);
-            default:
-                return null;
-        }
+        variables.put("e", BigDecimalMath.e(MATH_CONTEXT_WITH_MIN.getMathContext()));
+        variables.put("pi", BigDecimalMath.pi(MATH_CONTEXT_WITH_MIN.getMathContext()));
     }
 
     /**
@@ -287,8 +88,7 @@ public class CalculatorProcessor {
             switch (assignment) {
                 case "+": case "-": case "*": case "/": case "%":
                     if (variables.containsKey(LHS)) {
-                        BigDecimal numberOfLHS = variables.get(LHS);
-                        variables.put(LHS, binaryOperator(evaluate(RHS), numberOfLHS, Operators.of(assignment)));
+                        variables.put(LHS, BinaryOperators.of(assignment).call(variables.get(LHS), evaluate(RHS), MATH_CONTEXT_WITH_MIN));
                     } else {
                         throw new IllegalArgumentException(
                                 String.format("Invalid expression: unknown variable %s", LHS));
@@ -304,7 +104,7 @@ public class CalculatorProcessor {
                 throw new IllegalArgumentException("Invalid expression: illegal operators or input");
             }
             BigDecimal result = evaluate(input);
-            if (MINIMUM.compareTo(result.abs()) > 0) {
+            if (MATH_CONTEXT_WITH_MIN.getMinimum().compareTo(result.abs()) > 0) {
                 return "0";
             }
             BigDecimal plainDisplayUpper = BigDecimal.ONE.movePointRight(17);
@@ -326,15 +126,17 @@ public class CalculatorProcessor {
                 Functions f = Functions.of(temp);
                 assert f != null;
                 try {
-                    cache.push(functions(cache.pop(), f));
+                    cache.push(f.call(cache.pop(), MATH_CONTEXT_WITH_MIN));
                 } catch (NoSuchElementException e) {
                     throw new IllegalArgumentException("Invalid expression: fail to evaluate function");
                 }
-            } else if (Operators.isBinaryOperator(temp)) {
-                Operators o = Operators.of(temp);
+            } else if (BinaryOperators.isBinaryOperator(temp)) {
+                BinaryOperators o = BinaryOperators.of(temp);
                 assert o != null;
                 try {
-                    cache.push(binaryOperator(cache.pop(), cache.pop(), o));
+                    BigDecimal RHS = cache.pop();
+                    BigDecimal LHS = cache.pop();
+                    cache.push(o.call(LHS, RHS, MATH_CONTEXT_WITH_MIN));
                 } catch (NoSuchElementException e) {
                     throw new IllegalArgumentException("Invalid expression: fail to evaluate operator");
                 }
@@ -361,6 +163,7 @@ public class CalculatorProcessor {
                 String capturedOperator = mainMatcher.group("operator");
                 String capturedVariableOrFunction = mainMatcher.group("variable");
                 String capturedNumber = mainMatcher.group("number");
+
                 if (capturedOperator != null) {
                     if (Functions.isFunctionName(previousInput)) {
                         throw new IllegalArgumentException("Invalid expression: invalid function call");
@@ -385,9 +188,9 @@ public class CalculatorProcessor {
                         }
                     }
                     if (!cache.isEmpty() && !"(".equals(cache.peek()) && !"f(".equals(cache.peek())) {
-                        Operators thisO = Operators.of(capturedOperator);
+                        BinaryOperators thisO = BinaryOperators.of(capturedOperator);
                         assert thisO != null;
-                        Operators previousO = Operators.of(cache.peek());
+                        BinaryOperators previousO = BinaryOperators.of(cache.peek());
                         assert previousO != null;
                         if (thisO.comparePriority(previousO) <= 0) {
                             while (true) {
@@ -396,7 +199,7 @@ public class CalculatorProcessor {
                                 if (cache.isEmpty() || "(".equals(cache.peek()) || "f(".equals(cache.peek())) {
                                     break;
                                 }
-                                Operators o0 = Operators.of(cache.peek());
+                                BinaryOperators o0 = BinaryOperators.of(cache.peek());
                                 assert o0 != null;
                                 if (thisO.comparePriority(o0) > 0) {
                                     break;
