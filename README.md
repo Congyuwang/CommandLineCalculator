@@ -41,6 +41,7 @@ Must start with a latin letter, and follows latin letters or numbers and undersc
 - ```pow(x, y)``` (power: the same as x^y)
 - ```exp()``` (exponent)
 - ```gamma()``` (gamma function)
+- ```beta(a, b)``` (beta function)
 - ```factorial()``` (factorial function)
 - ```log()``` (natural logarithm)
 - ```log2()``` (logarithm base 2)
