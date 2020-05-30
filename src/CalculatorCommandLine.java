@@ -2,6 +2,9 @@ import java.util.Scanner;
 import calculator.PreservedKeywordException;
 import calculator.CalculatorProcessor;
 
+/**
+ * The command-lines version is used for debugging purpose only.
+ */
 public class CalculatorCommandLine {
 
     public static void main(String[] args) {

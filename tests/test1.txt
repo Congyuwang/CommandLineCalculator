@@ -1,2 +1,3 @@
 a = 2
 2 ^ root(a^3 +19, 1 + 2 * cos(0)) * 5
+log(pow(e, log(e) + 4))

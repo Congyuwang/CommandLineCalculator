@@ -123,7 +123,6 @@ public class CalculatorProcessor {
     private BigDecimal evaluate(String input) {
         Deque<String> postFix = toPosFix(input);
         Deque<BigDecimal> cache = new LinkedList<>();
-        // TODO: how to handle zero parameter?
         // TODO: change var dereferencing place
         System.out.println(">>>>eval:\n");
         while (!postFix.isEmpty()) {
@@ -132,19 +131,16 @@ public class CalculatorProcessor {
                 Functions f = Functions.of(temp);
                 assert f != null;
                 Deque<BigDecimal> parameters = new ArrayDeque<>(4);
-                BigDecimal param = cache.pop();
-                assert param != null;
-                parameters.push(param);
-                while(cache.size() > 0 && cache.peek() == null) {
-                    cache.remove();
-                    assert cache.size() > 0;
-                    param = cache.pop();
-                    assert param != null;
-                    parameters.push(param);
+                int paramCount = cache.pop().intValue();
+                if (paramCount > 20) {
+                    throw new IllegalArgumentException("Invalid expression: too many parameters");
+                }
+                for (int i = 0; i < paramCount; i++) {
+                    parameters.push(cache.pop());
                 }
                 try {
                     cache.push(f.call(parameters, MATH_CONTEXT_WITH_MIN));
-                } catch (UnsupportedOperationException e2) {
+                } catch (UnsupportedOperationException e) {
                     throw new IllegalArgumentException("Invalid expression: invalid number of parameters");
                 }
             } else if (BinaryOperators.isBinaryOperator(temp)) {
@@ -157,8 +153,6 @@ public class CalculatorProcessor {
                 } catch (NoSuchElementException e) {
                     throw new IllegalArgumentException("Invalid expression: fail to evaluate operator");
                 }
-            } else if (",".equals(temp)) {
-                cache.push(null);
             } else {
                 cache.push(new BigDecimal(temp));
             }
@@ -175,6 +169,7 @@ public class CalculatorProcessor {
     private Deque<String> toPosFix(String input) {
         Deque<String> postFix = new ArrayDeque<>();
         Deque<String> cache = new ArrayDeque<>();
+        Deque<Integer> functionParameterCount = new ArrayDeque<>();
         Matcher mainMatcher = MAIN_PATTERN.matcher(input);
         String previousInput = null;
         boolean negativeSign = false;
@@ -196,7 +191,8 @@ public class CalculatorProcessor {
                             throw new IllegalArgumentException("Invalid expression: misplaced logical_not");
                         }
                     }
-                    if ("operator".equals(previousInput) || "(".equals(previousInput) || previousInput == null) {
+                    if ("operator".equals(previousInput) || "(".equals(previousInput)
+                            || "f(".equals(previousInput) || previousInput == null) {
                         switch (capturedOperator) {
                             case "!":
                                 logicalNot = !logicalNot;
@@ -209,7 +205,7 @@ public class CalculatorProcessor {
                                 throw new IllegalArgumentException(String.format("Invalid expression: no operand preceding %s", capturedOperator));
                         }
                     }
-                    if (!cache.isEmpty() && !"(".equals(cache.peek()) && !"f(".equals(cache.peek()) && !",".equals(cache.peek())) {
+                    if (!cache.isEmpty() && !"(".equals(cache.peek()) && !"f(".equals(cache.peek())) {
                         BinaryOperators thisO = BinaryOperators.of(capturedOperator);
                         assert thisO != null;
                         BinaryOperators previousO = BinaryOperators.of(cache.peek());
@@ -217,7 +213,7 @@ public class CalculatorProcessor {
                         if (thisO.comparePriority(previousO) <= 0) {
                             while (true) {
                                 postFix.push(cache.pop());
-                                if (cache.isEmpty() || "(".equals(cache.peek()) || "f(".equals(cache.peek()) || ",".equals(cache.peek())) {
+                                if (cache.isEmpty() || "(".equals(cache.peek()) || "f(".equals(cache.peek())) {
                                     break;
                                 }
                                 BinaryOperators o0 = BinaryOperators.of(cache.peek());
@@ -236,27 +232,22 @@ public class CalculatorProcessor {
                     if ("operand".equals(previousInput) || ")".equals(previousInput)) {
                         throw new IllegalArgumentException("Invalid expression: incomplete expression");
                     }
-                    if (logicalNot) {
-                        cache.push("!");
-                        if (Functions.isFunctionName(previousInput)) {
-                            cache.push(previousInput);
+                    if (Functions.isFunctionName(previousInput)) {
+                        if (logicalNot) {
+                            cache.push("!");
+                            logicalNot = false;
+                        } else if (negativeSign) {
+                            cache.push("b-");
+                            negativeSign = false;
                         }
-                        cache.push("f(");
-                        logicalNot = false;
-                    } else if (negativeSign) {
-                        cache.push("b-");
-                        if (Functions.isFunctionName(previousInput)) {
-                            cache.push(previousInput);
-                        }
-                        cache.push("f(");
-                        negativeSign = false;
-                    } else if (Functions.isFunctionName(previousInput)) {
-                        cache.push(previousInput);
-                        cache.push("f(");
+                    functionParameterCount.push(0);
+                    cache.push(previousInput);
+                    cache.push("f(");
+                    previousInput = "f(";
                     } else {
                         cache.push("(");
+                        previousInput = "(";
                     }
-                    previousInput = capturedParenthesis;
                 }
 
                 if (")".equals(capturedParenthesis)) {
@@ -272,6 +263,7 @@ public class CalculatorProcessor {
                             break;
                         }
                         if ("f(".equals(temp)) {
+                            postFix.push(functionParameterCount.pop().toString());
                             postFix.push(cache.pop());
                             break;
                         }
@@ -280,11 +272,12 @@ public class CalculatorProcessor {
                         }
                         postFix.push(temp);
                     }
-                    previousInput = capturedParenthesis;
+                    previousInput = ")";
                 }
 
                 if (capturedPeriod != null) {
-                    if (cache.isEmpty() || ",".equals(previousInput) || "operator".equals(previousInput) || "(".equals(previousInput) || Functions.isFunctionName(previousInput)) {
+                    if (cache.isEmpty() || ",".equals(previousInput) || "operator".equals(previousInput) || "(".equals(previousInput)
+                            || "f(".equals(previousInput) || Functions.isFunctionName(previousInput)) {
                         throw new IllegalArgumentException("Invalid Expression: invalid period ',' position");
                     }
                     while (true) {
@@ -296,18 +289,19 @@ public class CalculatorProcessor {
                             cache.push("f(");
                             break;
                         }
-                        if (",".equals(temp)) {
-                            break;
-                        }
                         postFix.push(temp);
                     }
-                    postFix.push(",");
+                    functionParameterCount.push(functionParameterCount.pop() + 1);
                     previousInput = ",";
                 }
 
                 if (capturedVariableOrFunction != null) {
                     if (Functions.isFunctionName(previousInput) || "operand".equals(previousInput) || ")".equals(previousInput)) {
                         throw new IllegalArgumentException("Invalid expression: misplaced function or variable name");
+                    }
+                    if (!functionParameterCount.isEmpty() && functionParameterCount.peek() == 0) {
+                        functionParameterCount.pop();
+                        functionParameterCount.push(1);
                     }
                     if (Functions.isFunctionName(capturedVariableOrFunction)) {
                         previousInput = capturedVariableOrFunction;
@@ -333,6 +327,10 @@ public class CalculatorProcessor {
                         throw new IllegalArgumentException(
                                 String.format("Invalid expression: missing ( after %s", capturedVariableOrFunction));
                     }
+                    if (!functionParameterCount.isEmpty() && functionParameterCount.peek() == 0) {
+                        functionParameterCount.pop();
+                        functionParameterCount.push(1);
+                    }
                     if (logicalNot) {
                         postFix.push("0".equals(capturedNumber) ? "1" : "0");
                         logicalNot = false;
@@ -354,7 +352,7 @@ public class CalculatorProcessor {
         }
         while (!cache.isEmpty()) {
             String temp = cache.pop();
-            if ("(".equals(temp) || "f(".equals(temp) || ",".equals(temp)) {
+            if ("(".equals(temp) || "f(".equals(temp)) {
                 throw new IllegalArgumentException("Invalid expression: cannot find matching right parenthesis - missing )?");
             }
             postFix.push(temp);
