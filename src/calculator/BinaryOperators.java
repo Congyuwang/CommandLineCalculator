@@ -12,26 +12,22 @@ enum BinaryOperators {
     OR("|", -8, new Function() {
         @Override
         public BigDecimal call(BigDecimal left, BigDecimal right, MathContextWithMin context) {
-            return left.compareTo(BigDecimal.ZERO) == 0 && right.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO
-                    : BigDecimal.ONE;
+            return left.compareTo(BigDecimal.ZERO) == 0 && right.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO : BigDecimal.ONE;
         }
     }), AND("&", -7, new Function() {
         @Override
         public BigDecimal call(BigDecimal left, BigDecimal right, MathContextWithMin context) {
-            return left.compareTo(BigDecimal.ZERO) == 0 || right.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO
-                    : BigDecimal.ONE;
+            return left.compareTo(BigDecimal.ZERO) == 0 || right.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO : BigDecimal.ONE;
         }
     }), NOT_EQUAL("!=", -6, new Function() {
         @Override
         public BigDecimal call(BigDecimal left, BigDecimal right, MathContextWithMin context) {
-            return right.subtract(left).abs().compareTo(context.getMinimum()) > 0 ? BigDecimal.ZERO
-                    : BigDecimal.ONE;
+            return right.subtract(left).abs().compareTo(context.getMinimum()) > 0 ? BigDecimal.ZERO : BigDecimal.ONE;
         }
     }), EQUAL("==", -6, new Function() {
         @Override
         public BigDecimal call(BigDecimal left, BigDecimal right, MathContextWithMin context) {
-            return right.subtract(left).abs().compareTo(context.getMinimum()) < 0 ? BigDecimal.ONE
-                    : BigDecimal.ZERO;
+            return right.subtract(left).abs().compareTo(context.getMinimum()) < 0 ? BigDecimal.ONE : BigDecimal.ZERO;
         }
     }), GREATER(">", -4, new Function() {
         @Override
