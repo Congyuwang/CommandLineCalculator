@@ -10,124 +10,112 @@ import ch.obermuhlner.math.big.BigDecimalMath;
  */
 enum Functions {
 
-    SQUARE_ROOT(new Function() {
+    SQUARE_ROOT("sqrt", new Function() {
         @Override
         public BigDecimal call(BigDecimal input, MathContextWithMin context) {
             return BigDecimalMath.sqrt(input, context.getMathContext());
         }
-    }), NATURAL_LOG(new Function() {
+    }), NATURAL_LOG("log", new Function() {
         @Override
         public BigDecimal call(BigDecimal input, MathContextWithMin context) {
             return BigDecimalMath.log(input, context.getMathContext());
         }
-    }), LOG_TEN(new Function() {
+    }), LOG_TEN("log10", new Function() {
         @Override
         public BigDecimal call(BigDecimal input, MathContextWithMin context) {
             return BigDecimalMath.log10(input, context.getMathContext());
         }
-    }), LOG_TWO(new Function() {
+    }), LOG_TWO("log2", new Function() {
         @Override
         public BigDecimal call(BigDecimal input, MathContextWithMin context) {
             return BigDecimalMath.log2(input, context.getMathContext());
         }
-    }), EXPONENT(new Function() {
+    }), EXPONENT("exp", new Function() {
         @Override
         public BigDecimal call(BigDecimal input, MathContextWithMin context) {
             return BigDecimalMath.exp(input, context.getMathContext());
         }
-    }), LOGICAL_NOT(new Function() {
+    }), LOGICAL_NOT("b-", new Function() {
         @Override
         public BigDecimal call(BigDecimal input, MathContextWithMin context) {
             return input.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ONE : BigDecimal.ZERO;
         }
-    }), NEGATE(new Function() {
+    }), NEGATE("!", new Function() {
         @Override
         public BigDecimal call(BigDecimal input, MathContextWithMin context) {
             return input.negate();
         }
-    }), SINE(new Function() {
+    }), SINE("sin", new Function() {
         @Override
         public BigDecimal call(BigDecimal input, MathContextWithMin context) {
             return BigDecimalMath.sin(input, context.getMathContext());
         }
-    }), COSINE(new Function() {
+    }), COSINE("cos", new Function() {
         @Override
         public BigDecimal call(BigDecimal input, MathContextWithMin context) {
             return BigDecimalMath.cos(input, context.getMathContext());
         }
-    }), TANGENT(new Function() {
+    }), TANGENT("tan", new Function() {
         @Override
         public BigDecimal call(BigDecimal input, MathContextWithMin context) {
             return BigDecimalMath.tan(input, context.getMathContext());
         }
-    }), ARCSINE(new Function() {
+    }), ARCSINE("asin", new Function() {
         @Override
         public BigDecimal call(BigDecimal input, MathContextWithMin context) {
             return BigDecimalMath.asin(input, context.getMathContext());
         }
-    }), ARCCOSINE(new Function() {
+    }), ARCCOSINE("acos", new Function() {
         @Override
         public BigDecimal call(BigDecimal input, MathContextWithMin context) {
             return BigDecimalMath.acos(input, context.getMathContext());
         }
-    }), ARCTANGENT(new Function() {
+    }), ARCTANGENT("atan", new Function() {
         @Override
         public BigDecimal call(BigDecimal input, MathContextWithMin context) {
             return BigDecimalMath.atan(input, context.getMathContext());
         }
-    }), H_SINE(new Function() {
+    }), H_SINE("sinh", new Function() {
         @Override
         public BigDecimal call(BigDecimal input, MathContextWithMin context) {
             return BigDecimalMath.sinh(input, context.getMathContext());
         }
-    }), H_COSINE(new Function() {
+    }), H_COSINE("cosh", new Function() {
         @Override
         public BigDecimal call(BigDecimal input, MathContextWithMin context) {
             return BigDecimalMath.cosh(input, context.getMathContext());
         }
-    }), H_TANGENT(new Function() {
+    }), H_TANGENT("tanh", new Function() {
         @Override
         public BigDecimal call(BigDecimal input, MathContextWithMin context) {
             return BigDecimalMath.tanh(input, context.getMathContext());
         }
-    }), GAMMA(new Function() {
+    }), GAMMA("gamma", new Function() {
         @Override
         public BigDecimal call(BigDecimal input, MathContextWithMin context) {
             return BigDecimalMath.gamma(input, context.getMathContext());
         }
-    }), FACTORIAL(new Function() {
+    }), FACTORIAL("factorial", new Function() {
         @Override
         public BigDecimal call(BigDecimal input, MathContextWithMin context) {
             return BigDecimalMath.factorial(input, context.getMathContext());
         }
     });
 
+    private final String name;
     private final Function function;
-    private static final Map<String, Functions> functionNames = new HashMap<String, Functions>(){
+    private static final int numberOfFunctions = Functions.values().length;
+    private static final Map<String, Functions> functionNames = new HashMap<String, Functions>(numberOfFunctions){
         private static final long serialVersionUID = 3860916130056466065L;
         {
-            put("sqrt", SQUARE_ROOT);
-            put("log", NATURAL_LOG);
-            put("log10", LOG_TEN);
-            put("log2", LOG_TWO);
-            put("exp", EXPONENT);
-            put("b-", NEGATE);
-            put("!", LOGICAL_NOT);
-            put("sin", SINE);
-            put("cos", COSINE);
-            put("tan", TANGENT);
-            put("asin", ARCSINE);
-            put("acos", ARCCOSINE);
-            put("atan", ARCTANGENT);
-            put("sinh", H_SINE);
-            put("cosh", H_COSINE);
-            put("tanh", H_TANGENT);
-            put("gamma", GAMMA);
-            put("factorial", FACTORIAL);
+            for (Functions f : Functions.values()) {
+                put(f.name, f);
+            }
         }
     };
 
-    private Functions(Function function) {
+    private Functions(String name, Function function) {
+        this.name = name;
         this.function = function;
     }
 
