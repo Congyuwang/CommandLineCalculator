@@ -1,9 +1,8 @@
 package calculator;
 
-import java.util.Set;
-import java.util.HashSet;
+import java.util.Map;
 import java.math.BigDecimal;
-import java.util.Arrays;
+import java.util.HashMap;
 import ch.obermuhlner.math.big.BigDecimalMath;
 
 /**
@@ -13,150 +12,131 @@ enum Functions {
 
     SQUARE_ROOT(new Function() {
         @Override
-        public BigDecimal call(BigDecimal input, MathContextWithMin mathContext) {
-            return BigDecimalMath.sqrt(input, mathContext.getMathContext());
+        public BigDecimal call(BigDecimal input, MathContextWithMin context) {
+            return BigDecimalMath.sqrt(input, context.getMathContext());
         }
     }), NATURAL_LOG(new Function() {
         @Override
-        public BigDecimal call(BigDecimal input, MathContextWithMin mathContext) {
-            return BigDecimalMath.log(input, mathContext.getMathContext());
+        public BigDecimal call(BigDecimal input, MathContextWithMin context) {
+            return BigDecimalMath.log(input, context.getMathContext());
         }
     }), LOG_TEN(new Function() {
         @Override
-        public BigDecimal call(BigDecimal input, MathContextWithMin mathContext) {
-            return BigDecimalMath.log10(input, mathContext.getMathContext());
+        public BigDecimal call(BigDecimal input, MathContextWithMin context) {
+            return BigDecimalMath.log10(input, context.getMathContext());
         }
     }), LOG_TWO(new Function() {
         @Override
-        public BigDecimal call(BigDecimal input, MathContextWithMin mathContext) {
-            return BigDecimalMath.log2(input, mathContext.getMathContext());
+        public BigDecimal call(BigDecimal input, MathContextWithMin context) {
+            return BigDecimalMath.log2(input, context.getMathContext());
         }
     }), EXPONENT(new Function() {
         @Override
-        public BigDecimal call(BigDecimal input, MathContextWithMin mathContext) {
-            return BigDecimalMath.exp(input, mathContext.getMathContext());
+        public BigDecimal call(BigDecimal input, MathContextWithMin context) {
+            return BigDecimalMath.exp(input, context.getMathContext());
         }
     }), LOGICAL_NOT(new Function() {
         @Override
-        public BigDecimal call(BigDecimal input, MathContextWithMin mathContext) {
+        public BigDecimal call(BigDecimal input, MathContextWithMin context) {
             return input.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ONE : BigDecimal.ZERO;
         }
     }), NEGATE(new Function() {
         @Override
-        public BigDecimal call(BigDecimal input, MathContextWithMin mathContext) {
+        public BigDecimal call(BigDecimal input, MathContextWithMin context) {
             return input.negate();
         }
     }), SINE(new Function() {
         @Override
-        public BigDecimal call(BigDecimal input, MathContextWithMin mathContext) {
-            return BigDecimalMath.sin(input, mathContext.getMathContext());
+        public BigDecimal call(BigDecimal input, MathContextWithMin context) {
+            return BigDecimalMath.sin(input, context.getMathContext());
         }
     }), COSINE(new Function() {
         @Override
-        public BigDecimal call(BigDecimal input, MathContextWithMin mathContext) {
-            return BigDecimalMath.cos(input, mathContext.getMathContext());
+        public BigDecimal call(BigDecimal input, MathContextWithMin context) {
+            return BigDecimalMath.cos(input, context.getMathContext());
         }
     }), TANGENT(new Function() {
         @Override
-        public BigDecimal call(BigDecimal input, MathContextWithMin mathContext) {
-            return BigDecimalMath.tan(input, mathContext.getMathContext());
+        public BigDecimal call(BigDecimal input, MathContextWithMin context) {
+            return BigDecimalMath.tan(input, context.getMathContext());
         }
     }), ARCSINE(new Function() {
         @Override
-        public BigDecimal call(BigDecimal input, MathContextWithMin mathContext) {
-            return BigDecimalMath.asin(input, mathContext.getMathContext());
+        public BigDecimal call(BigDecimal input, MathContextWithMin context) {
+            return BigDecimalMath.asin(input, context.getMathContext());
         }
     }), ARCCOSINE(new Function() {
         @Override
-        public BigDecimal call(BigDecimal input, MathContextWithMin mathContext) {
-            return BigDecimalMath.acos(input, mathContext.getMathContext());
+        public BigDecimal call(BigDecimal input, MathContextWithMin context) {
+            return BigDecimalMath.acos(input, context.getMathContext());
         }
     }), ARCTANGENT(new Function() {
         @Override
-        public BigDecimal call(BigDecimal input, MathContextWithMin mathContext) {
-            return BigDecimalMath.atan(input, mathContext.getMathContext());
+        public BigDecimal call(BigDecimal input, MathContextWithMin context) {
+            return BigDecimalMath.atan(input, context.getMathContext());
         }
     }), H_SINE(new Function() {
         @Override
-        public BigDecimal call(BigDecimal input, MathContextWithMin mathContext) {
-            return BigDecimalMath.sinh(input, mathContext.getMathContext());
+        public BigDecimal call(BigDecimal input, MathContextWithMin context) {
+            return BigDecimalMath.sinh(input, context.getMathContext());
         }
     }), H_COSINE(new Function() {
         @Override
-        public BigDecimal call(BigDecimal input, MathContextWithMin mathContext) {
-            return BigDecimalMath.cosh(input, mathContext.getMathContext());
+        public BigDecimal call(BigDecimal input, MathContextWithMin context) {
+            return BigDecimalMath.cosh(input, context.getMathContext());
         }
     }), H_TANGENT(new Function() {
         @Override
-        public BigDecimal call(BigDecimal input, MathContextWithMin mathContext) {
-            return BigDecimalMath.tanh(input, mathContext.getMathContext());
+        public BigDecimal call(BigDecimal input, MathContextWithMin context) {
+            return BigDecimalMath.tanh(input, context.getMathContext());
         }
     }), GAMMA(new Function() {
         @Override
-        public BigDecimal call(BigDecimal input, MathContextWithMin mathContext) {
-            return BigDecimalMath.gamma(input, mathContext.getMathContext());
+        public BigDecimal call(BigDecimal input, MathContextWithMin context) {
+            return BigDecimalMath.gamma(input, context.getMathContext());
         }
     }), FACTORIAL(new Function() {
         @Override
-        public BigDecimal call(BigDecimal input, MathContextWithMin mathContext) {
-            return BigDecimalMath.factorial(input, mathContext.getMathContext());
+        public BigDecimal call(BigDecimal input, MathContextWithMin context) {
+            return BigDecimalMath.factorial(input, context.getMathContext());
         }
     });
 
     private final Function function;
+    private static final Map<String, Functions> functionNames = new HashMap<String, Functions>(){
+        private static final long serialVersionUID = 3860916130056466065L;
+        {
+            put("sqrt", SQUARE_ROOT);
+            put("log", NATURAL_LOG);
+            put("log10", LOG_TEN);
+            put("log2", LOG_TWO);
+            put("exp", EXPONENT);
+            put("b-", NEGATE);
+            put("!", LOGICAL_NOT);
+            put("sin", SINE);
+            put("cos", COSINE);
+            put("tan", TANGENT);
+            put("asin", ARCSINE);
+            put("acos", ARCCOSINE);
+            put("atan", ARCTANGENT);
+            put("sinh", H_SINE);
+            put("cosh", H_COSINE);
+            put("tanh", H_TANGENT);
+            put("gamma", GAMMA);
+            put("factorial", FACTORIAL);
+        }
+    };
 
     private Functions(Function function) {
         this.function = function;
     }
 
-    private static final Set<String> functionNames = new HashSet<>(Arrays.asList("sqrt", "log", "log10", "log2", "exp",
-            "b-", "!", "sin", "cos", "tan", "asin", "acos", "atan", "sinh", "cosh", "tanh", "gamma", "factorial"));
-
     public static final boolean isFunctionName(String s) {
-        return s != null && functionNames.contains(s);
+        return s != null && functionNames.containsKey(s);
     }
 
     public static final Functions of(String c) {
-        switch (c) {
-            case "sqrt":
-                return SQUARE_ROOT;
-            case "log":
-                return NATURAL_LOG;
-            case "log10":
-                return LOG_TEN;
-            case "log2":
-                return LOG_TWO;
-            case "exp":
-                return EXPONENT;
-            case "b-":
-                return NEGATE;
-            case "!":
-                return LOGICAL_NOT;
-            case "sin":
-                return SINE;
-            case "cos":
-                return COSINE;
-            case "tan":
-                return TANGENT;
-            case "asin":
-                return ARCSINE;
-            case "acos":
-                return ARCCOSINE;
-            case "atan":
-                return ARCTANGENT;
-            case "sinh":
-                return H_SINE;
-            case "cosh":
-                return H_COSINE;
-            case "tanh":
-                return H_TANGENT;
-            case "gamma":
-                return GAMMA;
-            case "factorial":
-                return FACTORIAL;
-            default:
-                return null;
-        }
+        return functionNames.get(c);
     }
 
     public final BigDecimal call(BigDecimal i, MathContextWithMin m) {

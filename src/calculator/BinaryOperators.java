@@ -1,9 +1,8 @@
 package calculator;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 import ch.obermuhlner.math.big.BigDecimalMath;
 
 /**
@@ -12,133 +11,117 @@ import ch.obermuhlner.math.big.BigDecimalMath;
 enum BinaryOperators {
     OR(-8, new Function() {
         @Override
-        public BigDecimal call(BigDecimal left, BigDecimal right, MathContextWithMin mathContext) {
+        public BigDecimal call(BigDecimal left, BigDecimal right, MathContextWithMin context) {
             return left.compareTo(BigDecimal.ZERO) == 0 && right.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO
                     : BigDecimal.ONE;
         }
     }), AND(-7, new Function() {
         @Override
-        public BigDecimal call(BigDecimal left, BigDecimal right, MathContextWithMin mathContext) {
+        public BigDecimal call(BigDecimal left, BigDecimal right, MathContextWithMin context) {
             return left.compareTo(BigDecimal.ZERO) == 0 || right.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO
                     : BigDecimal.ONE;
         }
     }), NOT_EQUAL(-6, new Function() {
         @Override
-        public BigDecimal call(BigDecimal left, BigDecimal right, MathContextWithMin mathContext) {
-            return right.subtract(left).abs().compareTo(mathContext.getMinimum()) > 0 ? BigDecimal.ZERO
+        public BigDecimal call(BigDecimal left, BigDecimal right, MathContextWithMin context) {
+            return right.subtract(left).abs().compareTo(context.getMinimum()) > 0 ? BigDecimal.ZERO
                     : BigDecimal.ONE;
         }
     }), EQUAL(-6, new Function() {
         @Override
-        public BigDecimal call(BigDecimal left, BigDecimal right, MathContextWithMin mathContext) {
-            return right.subtract(left).abs().compareTo(mathContext.getMinimum()) < 0 ? BigDecimal.ONE
+        public BigDecimal call(BigDecimal left, BigDecimal right, MathContextWithMin context) {
+            return right.subtract(left).abs().compareTo(context.getMinimum()) < 0 ? BigDecimal.ONE
                     : BigDecimal.ZERO;
         }
     }), GREATER(-4, new Function() {
         @Override
-        public BigDecimal call(BigDecimal left, BigDecimal right, MathContextWithMin mathContext) {
-            return left.subtract(right).compareTo(mathContext.getMinimum()) > 0 ? BigDecimal.ONE : BigDecimal.ZERO;
+        public BigDecimal call(BigDecimal left, BigDecimal right, MathContextWithMin context) {
+            return left.subtract(right).compareTo(context.getMinimum()) > 0 ? BigDecimal.ONE : BigDecimal.ZERO;
         }
     }), LESS(-4, new Function() {
         @Override
-        public BigDecimal call(BigDecimal left, BigDecimal right, MathContextWithMin mathContext) {
-            return right.subtract(left).compareTo(mathContext.getMinimum()) > 0 ? BigDecimal.ONE : BigDecimal.ZERO;
+        public BigDecimal call(BigDecimal left, BigDecimal right, MathContextWithMin context) {
+            return right.subtract(left).compareTo(context.getMinimum()) > 0 ? BigDecimal.ONE : BigDecimal.ZERO;
         }
     }), LESS_EQUAL(-4, new Function() {
         @Override
-        public BigDecimal call(BigDecimal left, BigDecimal right, MathContextWithMin mathContext) {
-            return left.subtract(right).compareTo(mathContext.getMinimum()) < 0 ? BigDecimal.ONE : BigDecimal.ZERO;
+        public BigDecimal call(BigDecimal left, BigDecimal right, MathContextWithMin context) {
+            return left.subtract(right).compareTo(context.getMinimum()) < 0 ? BigDecimal.ONE : BigDecimal.ZERO;
         }
     }), GREATER_EQUAL(-4, new Function() {
         @Override
-        public BigDecimal call(BigDecimal left, BigDecimal right, MathContextWithMin mathContext) {
-            return right.subtract(left).compareTo(mathContext.getMinimum()) < 0 ? BigDecimal.ONE : BigDecimal.ZERO;
+        public BigDecimal call(BigDecimal left, BigDecimal right, MathContextWithMin context) {
+            return right.subtract(left).compareTo(context.getMinimum()) < 0 ? BigDecimal.ONE : BigDecimal.ZERO;
         }
     }), PLUS(-3, new Function() {
         @Override
-        public BigDecimal call(BigDecimal left, BigDecimal right, MathContextWithMin mathContext) {
-            return left.add(right, mathContext.getMathContext());
+        public BigDecimal call(BigDecimal left, BigDecimal right, MathContextWithMin context) {
+            return left.add(right, context.getMathContext());
         }
     }), MINUS(-3, new Function() {
         @Override
-        public BigDecimal call(BigDecimal left, BigDecimal right, MathContextWithMin mathContext) {
-            return left.subtract(right, mathContext.getMathContext());
+        public BigDecimal call(BigDecimal left, BigDecimal right, MathContextWithMin context) {
+            return left.subtract(right, context.getMathContext());
         }
     }), MULTIPLY(-2, new Function() {
         @Override
-        public BigDecimal call(BigDecimal left, BigDecimal right, MathContextWithMin mathContext) {
-            return left.multiply(right, mathContext.getMathContext());
+        public BigDecimal call(BigDecimal left, BigDecimal right, MathContextWithMin context) {
+            return left.multiply(right, context.getMathContext());
         }
     }), DIVIDE(-2, new Function() {
         @Override
-        public BigDecimal call(BigDecimal left, BigDecimal right, MathContextWithMin mathContext) {
-            return left.divide(right, mathContext.getMathContext());
+        public BigDecimal call(BigDecimal left, BigDecimal right, MathContextWithMin context) {
+            return left.divide(right, context.getMathContext());
         }
     }), REMAINDER(-2, new Function() {
         @Override
-        public BigDecimal call(BigDecimal left, BigDecimal right, MathContextWithMin mathContext) {
-            return left.remainder(right, mathContext.getMathContext());
+        public BigDecimal call(BigDecimal left, BigDecimal right, MathContextWithMin context) {
+            return left.remainder(right, context.getMathContext());
         }
     }), POWER(-1, new Function() {
         @Override
-        public BigDecimal call(BigDecimal left, BigDecimal right, MathContextWithMin mathContext) {
-            if (right.remainder(BigDecimal.ONE, mathContext.getMathContext()).compareTo(BigDecimal.ZERO) == 0) {
-                return left.pow(right.intValue(), mathContext.getMathContext());
+        public BigDecimal call(BigDecimal left, BigDecimal right, MathContextWithMin context) {
+            if (right.remainder(BigDecimal.ONE, context.getMathContext()).compareTo(BigDecimal.ZERO) == 0) {
+                return left.pow(right.intValue(), context.getMathContext());
             }
-            return BigDecimalMath.pow(left, right, mathContext.getMathContext());
+            return BigDecimalMath.pow(left, right, context.getMathContext());
         }
     }), UNKNOWN(-100, new Function() {
     });
 
     private final int priority;
+    private final Function function;
+    private static final Map<String, BinaryOperators> binaryOperators = new HashMap<String, BinaryOperators>() {
+        private static final long serialVersionUID = 2668592046929251579L;
+        {
+            put("+", PLUS);
+            put("-", MINUS);
+            put("*", MULTIPLY);
+            put("/", DIVIDE);
+            put("<", LESS);
+            put("<=", LESS_EQUAL);
+            put(">", GREATER);
+            put(">=", GREATER_EQUAL);
+            put("==", EQUAL);
+            put("!=", NOT_EQUAL);
+            put("^", POWER);
+            put("%", REMAINDER);
+            put("&", AND);
+            put("|", OR);
+        }
+    };
 
     private BinaryOperators(int priority, Function function) {
         this.priority = priority;
         this.function = function;
     }
 
-    private final Function function;
-
-    private static final Set<String> binaryOperators = new HashSet<>(
-            Arrays.asList("+", "-", "*", "/", "<", "<=", ">", ">=", "==", "!=", "^", "%", "&", "|"));
-
     public static final boolean isBinaryOperator(String s) {
-        return s != null && binaryOperators.contains(s);
+        return s != null && binaryOperators.containsKey(s);
     }
 
     public static final BinaryOperators of(String c) {
-        switch (c) {
-            case "+":
-                return PLUS;
-            case "-":
-                return MINUS;
-            case "*":
-                return MULTIPLY;
-            case "/":
-                return DIVIDE;
-            case "<":
-                return LESS;
-            case "<=":
-                return LESS_EQUAL;
-            case ">":
-                return GREATER;
-            case ">=":
-                return GREATER_EQUAL;
-            case "==":
-                return EQUAL;
-            case "!=":
-                return NOT_EQUAL;
-            case "^":
-                return POWER;
-            case "%":
-                return REMAINDER;
-            case "&":
-                return AND;
-            case "|":
-                return OR;
-            default:
-                return UNKNOWN;
-        }
+        return binaryOperators.get(c);
     }
 
     public final int comparePriority(BinaryOperators o) {
