@@ -3,6 +3,7 @@ package calculator;
 import java.util.Map;
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.Deque;
 import ch.obermuhlner.math.big.BigDecimalMath;
 
 /**
@@ -100,6 +101,16 @@ enum Functions {
         public BigDecimal call(BigDecimal input, MathContextWithMin context) {
             return BigDecimalMath.factorial(input, context.getMathContext());
         }
+    }), ROOT("root", new Function() {
+        @Override
+        public BigDecimal call(BigDecimal x, BigDecimal n, MathContextWithMin context) {
+            return BigDecimalMath.root(x, n, context.getMathContext());
+        }
+    }), POWER("pow", new Function() {
+        @Override
+        public BigDecimal call(BigDecimal x, BigDecimal n, MathContextWithMin context) {
+            return BigDecimalMath.pow(x, n, context.getMathContext());
+        }
     });
 
     private final String name;
@@ -127,20 +138,25 @@ enum Functions {
         return functionNames.get(c);
     }
 
-    public final BigDecimal call(BigDecimal i, MathContextWithMin m) {
-        return function.call(i, m);
+    public final BigDecimal call(MathContextWithMin m) {
+        return function.call(m);
     }
 
-    public final BigDecimal call(BigDecimal i1, BigDecimal i2, MathContextWithMin m) {
-        return function.call(i1, i2, m);
-    }
-
-    public final BigDecimal call(BigDecimal i1, BigDecimal i2, BigDecimal i3, MathContextWithMin m) {
-        return function.call(i1, i2, i3, m);
-    }
-
-    public final BigDecimal call(BigDecimal i1, BigDecimal i2, BigDecimal i3, BigDecimal i4, MathContextWithMin m) {
-        return function.call(i1, i2, i3, i4, m);
+    public final BigDecimal call(Deque<BigDecimal> params, MathContextWithMin m) {
+        switch(params.size()) {
+            case 0:
+                return function.call(m);
+            case 1:
+                return function.call(params.pop(), m);
+            case 2:
+                return function.call(params.pop(), params.pop(), m);
+            case 3:
+                return function.call(params.pop(), params.pop(), params.pop(), m);
+            case 4:
+                return function.call(params.pop(), params.pop(), params.pop(), params.pop(), m);
+            default:
+                throw new UnsupportedOperationException("wrong number of arguments");
+        }
     }
 
 }

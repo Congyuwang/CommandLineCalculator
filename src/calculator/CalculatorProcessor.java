@@ -2,6 +2,7 @@ package calculator;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.LinkedList;
 import java.util.HashMap;
 import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
@@ -46,12 +47,14 @@ public class CalculatorProcessor {
     private static final String VARIABLE = "[a-zA-Z][a-zA-Z0-9_]*";
     private static final String NUMBER = "(([1-9]\\d*|0)(\\.\\d*)?)|(\\.\\d+)";
     private static final String PARENTHESIS = "[()]";
+    private static final String PERIOD = ",";
     private static final String OPERATORS = "(\\||&|%|!=|==|>=|<=|[!+\\-*/^><])";
     private static final String COMBINED_REGEX = "(?<variable>" + VARIABLE + ")\\s*|" +
                                                  "(?<number>" + NUMBER + ")\\s*|" +
                                                  "(?<parenthesis>" + PARENTHESIS + ")\\s*|" +
+                                                 "(?<period>" + PERIOD + ")\\s*|" +
                                                  "(?<operator>" + OPERATORS + ")\\s*";
-    private static final String EVALUATION = "(\\||&|%|!=|==|>=|<=|[a-zA-Z0-9_.!+\\-*/^()>< ])*";
+    private static final String EVALUATION = "(\\||&|%|!=|==|>=|<=|[a-zA-Z0-9_.!+\\-*/^()>< ,])*";
     private static final String ASSIGNMENT = "^\\s*(?<variable>" + VARIABLE + ")\\s*" +
                                                   "(?<assignment>[+\\-*/%]?)=\\s*" +
                                                   "(?<evaluation>" + EVALUATION + ")\\s*$";
@@ -119,16 +122,30 @@ public class CalculatorProcessor {
 
     private BigDecimal evaluate(String input) {
         Deque<String> postFix = toPosFix(input);
-        Deque<BigDecimal> cache = new ArrayDeque<>();
+        Deque<BigDecimal> cache = new LinkedList<>();
+        // TODO: how to handle zero parameter?
+        // TODO: change var dereferencing place
+        System.out.println(">>>>eval:\n");
         while (!postFix.isEmpty()) {
             String temp = postFix.pollLast();
             if (Functions.isFunctionName(temp)) {
                 Functions f = Functions.of(temp);
                 assert f != null;
+                Deque<BigDecimal> parameters = new ArrayDeque<>(4);
+                BigDecimal param = cache.pop();
+                assert param != null;
+                parameters.push(param);
+                while(cache.size() > 0 && cache.peek() == null) {
+                    cache.remove();
+                    assert cache.size() > 0;
+                    param = cache.pop();
+                    assert param != null;
+                    parameters.push(param);
+                }
                 try {
-                    cache.push(f.call(cache.pop(), MATH_CONTEXT_WITH_MIN));
-                } catch (NoSuchElementException e) {
-                    throw new IllegalArgumentException("Invalid expression: fail to evaluate function");
+                    cache.push(f.call(parameters, MATH_CONTEXT_WITH_MIN));
+                } catch (UnsupportedOperationException e2) {
+                    throw new IllegalArgumentException("Invalid expression: invalid number of parameters");
                 }
             } else if (BinaryOperators.isBinaryOperator(temp)) {
                 BinaryOperators o = BinaryOperators.of(temp);
@@ -140,9 +157,14 @@ public class CalculatorProcessor {
                 } catch (NoSuchElementException e) {
                     throw new IllegalArgumentException("Invalid expression: fail to evaluate operator");
                 }
+            } else if (",".equals(temp)) {
+                cache.push(null);
             } else {
                 cache.push(new BigDecimal(temp));
             }
+            System.out.println("postFix" + postFix);
+            System.out.println("deCache" + cache);
+            System.out.println();
         }
         if (cache.size() != 1) {
             throw new IllegalArgumentException("Invalid expression: error");
@@ -161,6 +183,7 @@ public class CalculatorProcessor {
             if (mainMatcher.find()) {
                 String capturedParenthesis = mainMatcher.group("parenthesis");
                 String capturedOperator = mainMatcher.group("operator");
+                String capturedPeriod = mainMatcher.group("period");
                 String capturedVariableOrFunction = mainMatcher.group("variable");
                 String capturedNumber = mainMatcher.group("number");
 
@@ -183,20 +206,18 @@ public class CalculatorProcessor {
                             case "+":
                                 continue loop;
                             default:
-                                throw new IllegalArgumentException(String.format("Invalid expression: no operand preceding %s",
-                                        capturedOperator));
+                                throw new IllegalArgumentException(String.format("Invalid expression: no operand preceding %s", capturedOperator));
                         }
                     }
-                    if (!cache.isEmpty() && !"(".equals(cache.peek()) && !"f(".equals(cache.peek())) {
+                    if (!cache.isEmpty() && !"(".equals(cache.peek()) && !"f(".equals(cache.peek()) && !",".equals(cache.peek())) {
                         BinaryOperators thisO = BinaryOperators.of(capturedOperator);
                         assert thisO != null;
                         BinaryOperators previousO = BinaryOperators.of(cache.peek());
                         assert previousO != null;
                         if (thisO.comparePriority(previousO) <= 0) {
                             while (true) {
-                                String temp = cache.pop();
-                                postFix.push(temp);
-                                if (cache.isEmpty() || "(".equals(cache.peek()) || "f(".equals(cache.peek())) {
+                                postFix.push(cache.pop());
+                                if (cache.isEmpty() || "(".equals(cache.peek()) || "f(".equals(cache.peek()) || ",".equals(cache.peek())) {
                                     break;
                                 }
                                 BinaryOperators o0 = BinaryOperators.of(cache.peek());
@@ -211,57 +232,77 @@ public class CalculatorProcessor {
                     previousInput = "operator";
                 }
 
-                if (capturedParenthesis != null) {
-                    if ("(".equals(capturedParenthesis)) {
-                        if ("operand".equals(previousInput) || ")".equals(previousInput)) {
-                            throw new IllegalArgumentException("Invalid expression: incomplete expression");
-                        }
-                        if (logicalNot) {
-                            cache.push("!");
-                            if (Functions.isFunctionName(previousInput)) {
-                                cache.push(previousInput);
-                            }
-                            cache.push("f(");
-                            logicalNot = false;
-                        } else if (negativeSign) {
-                            cache.push("b-");
-                            if (Functions.isFunctionName(previousInput)) {
-                                cache.push(previousInput);
-                            }
-                            cache.push("f(");
-                            negativeSign = false;
-                        } else if (Functions.isFunctionName(previousInput)) {
+                if ("(".equals(capturedParenthesis)) {
+                    if ("operand".equals(previousInput) || ")".equals(previousInput)) {
+                        throw new IllegalArgumentException("Invalid expression: incomplete expression");
+                    }
+                    if (logicalNot) {
+                        cache.push("!");
+                        if (Functions.isFunctionName(previousInput)) {
                             cache.push(previousInput);
-                            cache.push("f(");
-                        } else {
-                            cache.push("(");
                         }
+                        cache.push("f(");
+                        logicalNot = false;
+                    } else if (negativeSign) {
+                        cache.push("b-");
+                        if (Functions.isFunctionName(previousInput)) {
+                            cache.push(previousInput);
+                        }
+                        cache.push("f(");
+                        negativeSign = false;
+                    } else if (Functions.isFunctionName(previousInput)) {
+                        cache.push(previousInput);
+                        cache.push("f(");
                     } else {
-                        if (Functions.isFunctionName(previousInput) || "operator".equals(previousInput)
-                                || "(".equals(previousInput)) {
-                            throw new IllegalArgumentException("Invalid expression: incomplete expression");
-                        }
-                        if (cache.isEmpty()) {
-                            throw new IllegalArgumentException(
-                                    "Invalid expression: cannot find matching left parenthesis");
-                        }
-                        while (true) {
-                            String temp = cache.pop();
-                            if ("(".equals(temp)) {
-                                break;
-                            }
-                            if ("f(".equals(temp)) {
-                                postFix.push(cache.pop());
-                                break;
-                            }
-                            if (cache.isEmpty()) {
-                                throw new IllegalArgumentException(
-                                        "Invalid expression: cannot find matching left parenthesis");
-                            }
-                            postFix.push(temp);
-                        }
+                        cache.push("(");
                     }
                     previousInput = capturedParenthesis;
+                }
+
+                if (")".equals(capturedParenthesis)) {
+                    if (Functions.isFunctionName(previousInput) || "operator".equals(previousInput) || "(".equals(previousInput) || ",".equals(previousInput)) {
+                        throw new IllegalArgumentException("Invalid expression: incomplete expression");
+                    }
+                    if (cache.isEmpty()) {
+                        throw new IllegalArgumentException("Invalid expression: cannot find matching left parenthesis");
+                    }
+                    while (true) {
+                        String temp = cache.pop();
+                        if ("(".equals(temp)) {
+                            break;
+                        }
+                        if ("f(".equals(temp)) {
+                            postFix.push(cache.pop());
+                            break;
+                        }
+                        if (cache.isEmpty()) {
+                            throw new IllegalArgumentException("Invalid expression: cannot find matching left parenthesis");
+                        }
+                        postFix.push(temp);
+                    }
+                    previousInput = capturedParenthesis;
+                }
+
+                if (capturedPeriod != null) {
+                    if (cache.isEmpty() || ",".equals(previousInput) || "operator".equals(previousInput) || "(".equals(previousInput) || Functions.isFunctionName(previousInput)) {
+                        throw new IllegalArgumentException("Invalid Expression: invalid period ',' position");
+                    }
+                    while (true) {
+                        String temp = cache.pop();
+                        if ("(".equals(temp) || cache.isEmpty()) {
+                            throw new IllegalArgumentException("Invalid Expression: period ',' only allowed function");
+                        }
+                        if ("f(".equals(temp)) {
+                            cache.push("f(");
+                            break;
+                        }
+                        if (",".equals(temp)) {
+                            break;
+                        }
+                        postFix.push(temp);
+                    }
+                    postFix.push(",");
+                    previousInput = ",";
                 }
 
                 if (capturedVariableOrFunction != null) {
@@ -307,12 +348,14 @@ public class CalculatorProcessor {
             } else {
                 throw new IllegalArgumentException("Invalid expression: empty expression");
             }
+            System.out.println("cache: " + cache);
+            System.out.println("postFix: " + postFix);
+            System.out.println();
         }
         while (!cache.isEmpty()) {
             String temp = cache.pop();
-            if ("(".equals(temp) || "f(".equals(temp)) {
-                throw new IllegalArgumentException(
-                        "Invalid expression: cannot find matching right parenthesis - missing )?");
+            if ("(".equals(temp) || "f(".equals(temp) || ",".equals(temp)) {
+                throw new IllegalArgumentException("Invalid expression: cannot find matching right parenthesis - missing )?");
             }
             postFix.push(temp);
         }

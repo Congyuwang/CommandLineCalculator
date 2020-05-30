@@ -77,9 +77,6 @@ enum BinaryOperators {
     }), POWER("^", -1, new Function() {
         @Override
         public BigDecimal call(BigDecimal left, BigDecimal right, MathContextWithMin context) {
-            if (right.remainder(BigDecimal.ONE, context.getMathContext()).compareTo(BigDecimal.ZERO) == 0) {
-                return left.pow(right.intValue(), context.getMathContext());
-            }
             return BigDecimalMath.pow(left, right, context.getMathContext());
         }
     });

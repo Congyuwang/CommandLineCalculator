@@ -37,6 +37,8 @@ Must start with a latin letter, and follows latin letters or numbers and undersc
 ### Supported functions
 
 - ```sqrt()``` (square root)
+- ```root(x, n)``` (n-th root)
+- ```pow(x, y)``` (power: the same as x^y)
 - ```exp()``` (exponent)
 - ```gamma()``` (gamma function)
 - ```factorial()``` (factorial function)

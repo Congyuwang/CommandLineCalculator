@@ -8,6 +8,10 @@ import java.math.BigDecimal;
  */
 interface Function {
 
+    default BigDecimal call(MathContextWithMin mathContext) {
+        throw new UnsupportedOperationException();
+    }
+
     default BigDecimal call(BigDecimal input, MathContextWithMin mathContext) {
         throw new UnsupportedOperationException();
     }
