@@ -22,7 +22,7 @@ enum BinaryOperators {
     }), NOT_EQUAL("!=", -6, new Function() {
         @Override
         public BigDecimal call(BigDecimal left, BigDecimal right, MathContextWithMin context) {
-            return right.subtract(left).abs().compareTo(context.getMinimum()) > 0 ? BigDecimal.ZERO : BigDecimal.ONE;
+            return right.subtract(left).abs().compareTo(context.getMinimum()) >= 0 ? BigDecimal.ONE: BigDecimal.ZERO;
         }
     }), EQUAL("==", -6, new Function() {
         @Override

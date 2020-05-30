@@ -46,12 +46,12 @@ public class CalculatorProcessor {
     private static final String VARIABLE = "[a-zA-Z][a-zA-Z0-9_]*";
     private static final String NUMBER = "(([1-9]\\d*|0)(\\.\\d*)?)|(\\.\\d+)";
     private static final String PARENTHESIS = "[()]";
-    private static final String OPERATORS = "(!|\\||&|%|!=|==|>=|<=|[+\\-*/^><])";
+    private static final String OPERATORS = "(\\||&|%|!=|==|>=|<=|[!+\\-*/^><])";
     private static final String COMBINED_REGEX = "(?<variable>" + VARIABLE + ")\\s*|" +
                                                  "(?<number>" + NUMBER + ")\\s*|" +
                                                  "(?<parenthesis>" + PARENTHESIS + ")\\s*|" +
                                                  "(?<operator>" + OPERATORS + ")\\s*";
-    private static final String EVALUATION = "(!|\\||&|%|!=|==|>=|<=|[a-zA-Z0-9_.+\\-*/^()>< ])*";
+    private static final String EVALUATION = "(\\||&|%|!=|==|>=|<=|[a-zA-Z0-9_.!+\\-*/^()>< ])*";
     private static final String ASSIGNMENT = "^\\s*(?<variable>" + VARIABLE + ")\\s*" +
                                                   "(?<assignment>[+\\-*/%]?)=\\s*" +
                                                   "(?<evaluation>" + EVALUATION + ")\\s*$";
