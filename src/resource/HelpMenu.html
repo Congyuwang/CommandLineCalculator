@@ -4,12 +4,11 @@
 <p>
     This is a simple calculator program that allows <i>variable definition</i>, and
     supports <i>basic functions</i> like exponential, logarithm, and square root.
-    The smallest floating number is 1E-30.
+    The smallest positive floating number is 1E-15.
     Any number smaller with an absolute value smaller than that is treated as 0.
 </p>
-<p><b>
-        <font size="+0.5">Keymap</font>
-    </b>:
+<p>
+<h2>Keymap</h2>
 <ul>
     <li>
         <font face="Courier">ENTER</font> (calculate result)
@@ -20,17 +19,16 @@
     <li>
         <font face="Courier">DOWN_ARROW</font> (next input)
     </li>
-</ul></p>
-<p><b>
-        <font size="+0.5">Variable names</font>
-    </b>:
-    must start with a latin letter, and follows latin letters or
-    numbers and underscores. Examples: <font face="Courier">a1</font>,
-    <font face="Courier">number_of_apples</font>,
-    <font face="Courier">alpha__</font>.</p>
-<p><b>
-        <font size="+0.5">Supported operators (in descending order of priority)</font>
-    </b>: <br>
+</ul>
+</p>
+<p>
+<h2>Variable names</h2>
+must start with a latin letter, and follows latin letters or
+numbers and underscores. Examples: <font face="Courier">a1</font>,
+<font face="Courier">number_of_apples</font>,
+<font face="Courier">alpha__</font>.</p>
+<p>
+<h2>Supported operators (in descending order of priority)</h2>
 <ul>
     <li>
         <font face="Courier">()</font> (parenthesis)
@@ -60,18 +58,34 @@
         <font face="Courier">|</font> (logical_or)
     </li>
 </ul>
-<p><b>
-        <font size="+0.5">Supported assignments</font>
-    </b>: <font face="Courier">=</font> normal assignment,
-    <font face="Courier">+=</font> add,
-    <font face="Courier">-=</font> subtract,
-    <font face="Courier">*=</font> multiply,
-    <font face="Courier">/=</font> divide,
-    <font face="Courier">%=</font> remainder,
-    <font face="Courier">^=</font> power</p>
-<p><b>
-        <font size="+0.5">Supported functions</font>
-    </b>:
+<p>
+<h2>Supported assignments</h2>
+<ul>
+    <li>
+        <font face="Courier">=</font> normal assignment,
+    </li>
+    <li>
+        <font face="Courier">+=</font> add,
+    </li>
+    <li>
+        <font face="Courier">-=</font> subtract,
+    </li>
+    <li>
+        <font face="Courier">*=</font> multiply,
+    </li>
+    <li>
+        <font face="Courier">/=</font> divide,
+    </li>
+    <li>
+        <font face="Courier">%=</font> remainder,
+    </li>
+    <li>
+        <font face="Courier">^=</font> power
+    </li>
+</ul>
+</p>
+<p>
+<h2>Supported functions</h2>
 <ul>
     <li>
         <font face="Courier">sqrt()</font> (square root)
@@ -131,7 +145,243 @@
         <font face="Courier">tanh()</font> (hyperbolic tangent)
     </li>
 </ul>
-<p><b>
-        <font size="+0.5">Predefined variables</font>
-    </b>: <font face="Courier">e</font>
-    and <font face="Courier">pi</font>, which can be reassigned if needed.</p><br>
+<h3>Probability related functions</h3>
+<h4>Uniform Distribution</h4>
+<ul>
+    <li>
+        <font face="Courier">runif()</font> random sample from Uniform Distribution [0, 1)
+    </li>
+    <li>
+        <font face="Courier">runif(b)</font> random sample from Beta Distribution [0, b)
+    </li>
+    <li>
+        <font face="Courier">runif(a, b)</font> random sample from Beta Distribution [a, b)
+    </li>
+</ul>
+<h4>Beta Distribution</h4>
+<ul>
+    <li>
+        <font face="Courier">pbeta(q, alpha, beta)</font> distribution function of Beta Distribution
+    </li>
+    <li>
+        <font face="Courier">dbeta(x, alpha, beta)</font> density function of Beta Distribution
+    </li>
+    <li>
+        <font face="Courier">qbeta(p, alpha, beta)</font> inverse distribution function of Beta
+        Distribution
+    </li>
+    <li>
+        <font face="Courier">rbeta(alpha, beta)</font> random sample from Beta Distribution
+    </li>
+</ul>
+<h4>Gamma Distribution</h4>
+<ul>
+    <li>
+        <font face="Courier">pgamma(q, shape, scale)</font> distribution function of Gamma Distribution
+    </li>
+    <li>
+        <font face="Courier">dgamma(x, shape, scale)</font> density function of Gamma Distribution
+    </li>
+    <li>
+        <font face="Courier">qgamma(p, shape, scale)</font> inverse distribution function of Gamma
+        Distribution
+    </li>
+    <li>
+        <font face="Courier">rgamma(shape, scale)</font> random sample from Gamma Distribution
+    </li>
+</ul>
+<h4>Normal Distribution</h4>
+<ul>
+    <li>
+        <font face="Courier">pnorm(q)</font> distribution function of Normal Distribution (0, 1)
+    </li>
+    <li>
+        <font face="Courier">pnorm(x)</font> density function of Normal Distribution (0, 1)
+    </li>
+    <li>
+        <font face="Courier">qnorm(p)</font> inverse distribution function of Normal Distribution (0, 1)
+    </li>
+    <li>
+        <font face="Courier">rnorm()</font> random sample from Normal Distribution (0, 1)
+    </li>
+    <li>
+        <font face="Courier">pnorm(q, mean, sd)</font> distribution function of Normal Distribution
+    </li>
+    <li>
+        <font face="Courier">dnorm(x, mean, sd)</font> density function of Normal Distribution
+    </li>
+    <li>
+        <font face="Courier">qnorm(p, mean, sd)</font> inverse distribution function of Normal
+        Distribution
+    </li>
+    <li>
+        <font face="Courier">rnorm(mean, sd)</font> random sample from Normal Distribution
+    </li>
+</ul>
+<h4>Binomial Distribution</h4>
+<ul>
+    <li>
+        <font face="Courier">pbinom(q, trials, p)</font> distribution function of Binomial Distribution
+    </li>
+    <li>
+        <font face="Courier">dbinom(x, trials, p)</font> density function of Binomial Distribution
+    </li>
+    <li>
+        <font face="Courier">qbinom(p, trials, p)</font> inverse distribution function of Binomial
+        Distribution
+    </li>
+    <li>
+        <font face="Courier">rbinom(trials, p)</font> random sample from Binomial Distribution
+    </li>
+</ul>
+<h4>T Distribution</h4>
+
+<ul>
+
+    <li>
+        <font face="Courier">pt(q, degreeOfFreedom)</font> distribution function of T Distribution
+    </li>
+    <li>
+        <font face="Courier">dt(x, degreeOfFreedom)</font> density function of T Distribution
+    </li>
+    <li>
+        <font face="Courier">qt(p, degreeOfFreedom)</font> inverse distribution function of T
+        Distribution
+    </li>
+    <li>
+        <font face="Courier">rt(degreeOfFreedom)</font> random sample from T Distribution
+    </li>
+</ul>
+<h4>Chi Squared Distribution</h4>
+<ul>
+    <li>
+        <font face="Courier">pchisq(q, degreeOfFreedom)</font> distribution function of ChiSquared
+        Distribution
+    </li>
+    <li>
+        <font face="Courier">dchisq(x, degreeOfFreedom)</font> density function of ChiSquared
+        Distribution
+    </li>
+    <li>
+        <font face="Courier">qchisq(p, degreeOfFreedom)</font> inverse distribution function of
+        ChiSquared Distribution
+    </li>
+    <li>
+        <font face="Courier">rchisq(degreeOfFreedom)</font> random sample from ChiSquared Distribution
+    </li>
+</ul>
+<h4>Cauchy Distribution</h4>
+<ul>
+    <li>
+        <font face="Courier">pcauchy(q)</font> distribution function of Cauchy Distribution with median
+        = 0, scale = 1
+    </li>
+    <li>
+        <font face="Courier">pcauchy(x)</font> density function of Cauchy Distribution with median = 0,
+        scale = 1
+    </li>
+    <li>
+        <font face="Courier">qcauchy(p)</font> inverse distribution function of Cauchy Distribution with
+        median = 0,
+        scale = 1
+    </li>
+    <li>
+        <font face="Courier">rcauchy()</font> random sample from Cauchy Distribution with median = 0,
+        scale = 1
+    </li>
+    <li>
+        <font face="Courier">pcauchy(q, median, scale)</font> distribution function of Cauchy
+        Distribution
+    </li>
+    <li>
+        <font face="Courier">dcauchy(x, median, scale)</font> density function of Cauchy Distribution
+    </li>
+    <li>
+        <font face="Courier">qcauchy(p, median, scale)</font> inverse distribution function of Cauchy
+        Distribution
+    </li>
+    <li>
+        <font face="Courier">rcauchy(median, scale)</font> random sample from Cauchy Distribution
+    </li>
+</ul>
+<h4>Exponential Distribution</h4>
+<ul>
+    <li>
+        <font face="Courier">pexp(q)</font> distribution function of Exponential Distribution with mean
+        = 1
+    </li>
+    <li>
+        <font face="Courier">pexp(x)</font> density function of Exponential Distribution with mean = 1
+    </li>
+    <li>
+        <font face="Courier">qexp(p)</font> inverse distribution function of Exponential Distribution
+        with mean = 1
+    </li>
+    <li>
+        <font face="Courier">rexp()</font> random sample from Exponential Distribution with mean = 1
+    </li>
+    <li>
+        <font face="Courier">pexp(q, mean)</font> distribution function of Exponential Distribution
+    </li>
+    <li>
+        <font face="Courier">dexp(x, mean)</font> density function of Exponential Distribution
+    </li>
+    <li>
+        <font face="Courier">qexp(p, mean)</font> inverse distribution function of Exponential
+        Distribution
+    </li>
+    <li>
+        <font face="Courier">rexp(mean)</font> random sample from Exponential Distribution
+    </li>
+</ul>
+<h4>F Distribution</h4>
+<ul>
+    <li>
+        <font face="Courier">pf(q, numeratorDegreeOfFreedom, denominatorDegreeOfFreedom)</font>
+        distribution function of
+        F Distribution
+    </li>
+    <li>
+        <font face="Courier">df(x, numeratorDegreeOfFreedom, denominatorDegreeOfFreedom)</font> density
+        function of F
+        Distribution
+    </li>
+    <li>
+        <font face="Courier">qf(p, numeratorDegreeOfFreedom, denominatorDegreeOfFreedom)</font> inverse
+        distribution
+        function of F Distribution
+    </li>
+    <li>
+        <font face="Courier">rf(numeratorDegreeOfFreedom, denominatorDegreeOfFreedom)</font> random
+        sample from F
+        Distribution
+    </li>
+</ul>
+<h4>Hypergeometric Distribution</h4>
+<ul>
+    <li>
+        <font face="Courier">phyper(q, populationSize, numberOfSuccesses, sampleSize)</font>
+        distribution function of
+        Hypergeometric Distribution
+    </li>
+    <li>
+        <font face="Courier">dhyper(x, populationSize, numberOfSuccesses, sampleSize)</font> density
+        function of
+        Hypergeometric Distribution
+    </li>
+    <li>
+        <font face="Courier">qhyper(p, populationSize, numberOfSuccesses, sampleSize)</font> inverse
+        distribution
+        function of Hypergeometric
+    </li>
+    Distribution
+    <li>
+        <font face="Courier">rhyper(populationSize, numberOfSuccesses, sampleSize)</font> random sample
+        from
+        Hypergeometric Distribution
+    </li>
+</ul>
+</p>
+<p>
+<h2>Predefined variables</h2>
+<font face="Courier">e</font> and <font face="Courier">pi</font>, which can be reassigned if needed.</p><br>

@@ -5,6 +5,8 @@ import java.math.BigDecimal;
 /**
  * The Function interface provides an interface for defining a function
  * supported by the calculator.
+ *
+ * @throws UnsupportedOperationException if the default method is not overridden.
  */
 interface Function {
 
