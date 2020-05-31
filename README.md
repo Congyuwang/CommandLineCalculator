@@ -1,16 +1,14 @@
 # Minimalism-Calculator
 
-This is a minimal calculator in Java that allows variable assignment and supports basic functions.
+This is a simple calculator program that allows _variable definition_,
+and supports many useful functions.
 
-Use up and down arrow key to navigate through history.
+Use UP and DOWN to browse input history.
+Press ENTER to calculate result.
 
-Press enter to calculate result.
-
-Click help to see help.
+Use ';' to separate multiple expressions in a line.
 
 ## Help Menu
-
-This is a simple calculator program that allows _variable definition_, and supports _basic functions_ like exponential, logarithm, and square root. The smallest floating number is 1E-15. Any number smaller with an absolute value smaller than that is treated as 0.
 
 ### Keymap
 
@@ -160,3 +158,9 @@ Must start with a latin letter, and follows latin letters or numbers and undersc
 - ```/=``` divide
 - ```%=``` remainder
 - ```^=``` power
+
+### Other Notes
+
+The smallest positive floating number is 1e-15.
+Any number with an absolute value smaller than 1e-15 is treated as 0.
+Any number with a difference smaller than 1e-15 are regarded as equal.

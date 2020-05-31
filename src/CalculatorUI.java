@@ -47,13 +47,13 @@ public class CalculatorUI extends JFrame {
     public CalculatorUI() {
         super("Calculator");
         calculator = new CalculatorProcessor();
-        setSize(600, 400);
+        setSize(640, 480);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         getContentPane().setBackground(Color.WHITE);
         getContentPane().setForeground(Color.WHITE);
-        setMinimumSize(new Dimension(300, 200));
+        setMinimumSize(new Dimension(320, 240));
 
         addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent e) {
@@ -156,35 +156,50 @@ public class CalculatorUI extends JFrame {
         inputField.requestFocus();
     }
 
-    private void mainOperation(int[] round, JComponent[] previousLine, String inputString) {
-        if (!"".equals(inputString.trim())) {
+    private final void mainOperation(int[] round, JComponent[] previousLine, String inputString) {
+        if (!inputString.trim().matches("[\\s;]*")) {
             inputField.setEditable(false);
+            inputGuide.setText(String.format("In[%d]:", round[0]));
             round[0]++;
-            String output;
-            try {
-                output = calculator.expression(inputString);
-            } catch (IllegalArgumentException | PreservedKeywordException | ArithmeticException e) {
-                output = e.getMessage();
+            StringBuilder stringBuilder = new StringBuilder();
+            for (char c : inputString.toCharArray()) {
+                if (c == ';') {
+                    addNewResult(previousLine, stringBuilder.toString());
+                    stringBuilder.setLength(0);
+                } else {
+                    stringBuilder.append(c);
+                }
             }
+            addNewResult(previousLine, stringBuilder.toString());
             inputGuide = printNewString(String.format("In[%d]:", round[0]), Color.BLACK, Color.LIGHT_GRAY);
             inputGuide.addKeyListener(globalKeyListener);
             inputField = newInput();
             addHistory(inputField.getText(), round[0]);
             current = lastInput;
-            if (output != null) {
-                JTextArea newText = printNewString(output, Color.BLACK, Color.WHITE);
-                newText.addKeyListener(globalKeyListener);
-                addComponentToNewLine(newText, previousLine[0]);
-                addComponentToNewLine(inputGuide, newText);
-            } else {
-                addComponentToNewLine(inputGuide, previousLine[0]);
-            }
+            addComponentToNewLine(inputGuide, previousLine[0]);
             appendComponentToLine(inputField, inputGuide);
             previousLine[0] = inputField;
         }
         revalidate();
         JScrollBar vScrollBar = scrollPane.getVerticalScrollBar();
         vScrollBar.setValue(vScrollBar.getModel().getMaximum() - vScrollBar.getModel().getExtent());
+    }
+
+    private final void addNewResult(JComponent[] previousLine, String inputString) {
+        if (!"".equals(inputString.trim())) {
+            String output;
+            try {
+                output = calculator.expression(inputString);
+            } catch (IllegalArgumentException | PreservedKeywordException | ArithmeticException e) {
+                output = e.getMessage();
+            }
+            if (output != null) {
+                JTextArea newText = printNewString(output, Color.BLACK, Color.WHITE);
+                newText.addKeyListener(globalKeyListener);
+                addComponentToNewLine(newText, previousLine[0]);
+                previousLine[0] = newText;
+            }
+        }
     }
 
     private JTextField newInput() {
