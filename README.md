@@ -10,7 +10,7 @@ Click help to see help.
 
 ## Help Menu
 
-This is a simple calculator program that allows _variable definition_, and supports _basic functions_ like exponential, logarithm, and square root. The smallest floating number is 1E-30. Any number smaller with an absolute value smaller than that is treated as 0.
+This is a simple calculator program that allows _variable definition_, and supports _basic functions_ like exponential, logarithm, and square root. The smallest floating number is 1E-15. Any number smaller with an absolute value smaller than that is treated as 0.
 
 ### Keymap
 
@@ -55,6 +55,96 @@ Must start with a latin letter, and follows latin letters or numbers and undersc
 - ```sinh()``` (hyperbolic sine)
 - ```cosh()``` (hyperbolic cosine)
 - ```tanh()``` (hyperbolic tangent)
+
+#### Probability related functions
+
+##### UniformDistribution
+
+- ```runif()``` random sample from Uniform Distribution [0, 1)
+- ```runif(b)``` random sample from Beta Distribution [0, b)
+- ```runif(a, b)``` random sample from Beta Distribution [a, b)
+
+##### BetaDistribution
+
+- ```pbeta(q, alpha, beta)``` distribution function of Beta Distribution
+- ```dbeta(x, alpha, beta)``` density function of Beta Distribution
+- ```qbeta(p, alpha, beta)``` inverse distribution function of Beta Distribution
+- ```rbeta(alpha, beta)``` random sample from Beta Distribution
+
+##### GammaDistribution
+
+- ```pgamma(q, shape, scale)``` distribution function of Gamma Distribution
+- ```dgamma(x, shape, scale)``` density function of Gamma Distribution
+- ```qgamma(p, shape, scale)``` inverse distribution function of Gamma Distribution
+- ```rgamma(shape, scale)``` random sample from Gamma Distribution
+
+##### NormalDistribution
+
+- ```pnorm(q)``` distribution function of Normal Distribution (0, 1)
+- ```pnorm(x)``` density function of Normal Distribution (0, 1)
+- ```qnorm(p)``` inverse distribution function of Normal Distribution (0, 1)
+- ```rnorm()``` random sample from Normal Distribution (0, 1)
+- ```pnorm(q, mean, sd)``` distribution function of Normal Distribution
+- ```dnorm(x, mean, sd)``` density function of Normal Distribution
+- ```qnorm(p, mean, sd)``` inverse distribution function of Normal Distribution
+- ```rnorm(mean, sd)``` random sample from Normal Distribution
+
+##### BinomialDistribution
+
+- ```pbinom(q, trials, p)``` distribution function of Binomial Distribution
+- ```dbinom(x, trials, p)``` density function of Binomial Distribution
+- ```qbinom(p, trials, p)``` inverse distribution function of Binomial Distribution
+- ```rbinom(trials, p)``` random sample from Binomial Distribution
+
+##### TDistribution
+
+- ```pt(q, degreeOfFreedom)``` distribution function of T Distribution
+- ```dt(x, degreeOfFreedom)``` density function of T Distribution
+- ```qt(p, degreeOfFreedom)``` inverse distribution function of T Distribution
+- ```rt(degreeOfFreedom)``` random sample from T Distribution
+
+##### ChiSquaredDistribution
+
+- ```pchisq(q, degreeOfFreedom)``` distribution function of ChiSquared Distribution
+- ```dchisq(x, degreeOfFreedom)``` density function of ChiSquared Distribution
+- ```qchisq(p, degreeOfFreedom)``` inverse distribution function of ChiSquared Distribution
+- ```rchisq(degreeOfFreedom)``` random sample from ChiSquared Distribution
+
+##### CauchyDistribution
+
+- ```pcauchy(q)``` distribution function of Cauchy Distribution with median = 0, scale = 1
+- ```pcauchy(x)``` density function of Cauchy Distribution with median = 0, scale = 1
+- ```qcauchy(p)``` inverse distribution function of Cauchy Distribution with median = 0, scale = 1
+- ```rcauchy()``` random sample from Cauchy Distribution with median = 0, scale = 1
+- ```pcauchy(q, median, scale)``` distribution function of Cauchy Distribution
+- ```dcauchy(x, median, scale)``` density function of Cauchy Distribution
+- ```qcauchy(p, median, scale)``` inverse distribution function of Cauchy Distribution
+- ```rcauchy(median, scale)``` random sample from Cauchy Distribution
+
+##### ExponentialDistribution
+
+- ```pexp(q)``` distribution function of Exponential Distribution with mean = 1
+- ```pexp(x)``` density function of Exponential Distribution with mean = 1
+- ```qexp(p)``` inverse distribution function of Exponential Distribution with mean = 1
+- ```rexp()``` random sample from Exponential Distribution with mean = 1
+- ```pexp(q, mean)``` distribution function of Exponential Distribution
+- ```dexp(x, mean)``` density function of Exponential Distribution
+- ```qexp(p, mean)``` inverse distribution function of Exponential Distribution
+- ```rexp(mean)``` random sample from Exponential Distribution
+
+##### FDistribution
+
+- ```pf(q, numeratorDegreeOfFreedom, denominatorDegreeOfFreedom)``` distribution function of F Distribution
+- ```df(x, numeratorDegreeOfFreedom, denominatorDegreeOfFreedom)``` density function of F Distribution
+- ```qf(p, numeratorDegreeOfFreedom, denominatorDegreeOfFreedom)``` inverse distribution function of F Distribution
+- ```rf(numeratorDegreeOfFreedom, denominatorDegreeOfFreedom)``` random sample from F Distribution
+
+##### HypergeometricDistribution
+
+- ```phyper(q, populationSize, numberOfSuccesses, sampleSize)``` distribution function of Hypergeometric Distribution
+- ```dhyper(x, populationSize, numberOfSuccesses, sampleSize)``` density function of Hypergeometric Distribution
+- ```qhyper(p, populationSize, numberOfSuccesses, sampleSize)``` inverse distribution function of Hypergeometric Distribution
+- ```rhyper(populationSize, numberOfSuccesses, sampleSize)``` random sample from Hypergeometric Distribution
 
 ### Predefined variables (can be reassigned if needed)
 

@@ -57,7 +57,7 @@ public class CalculatorProcessor {
     private static final Pattern EVALUATION_PATTERN = Pattern.compile(EVALUATION);
     private static final Pattern ASSIGNMENT_PATTERN = Pattern.compile(ASSIGNMENT);
     private static final Pattern MAIN_PATTERN = Pattern.compile(COMBINED_REGEX);
-    private static final MathContextWithMin MATH_CONTEXT_WITH_MIN = new MathContextWithMin(MathContext.DECIMAL128, BigDecimal.ONE.movePointLeft(30));
+    private static final MathContextWithMin MATH_CONTEXT_WITH_MIN = new MathContextWithMin(MathContext.DECIMAL128, BigDecimal.ONE.movePointLeft(15));
     private final HashMap<String, BigDecimal> variables = new HashMap<>();
 
     public CalculatorProcessor() {
@@ -106,7 +106,7 @@ public class CalculatorProcessor {
             if (MATH_CONTEXT_WITH_MIN.getMinimum().compareTo(result.abs()) > 0) {
                 return "0";
             }
-            BigDecimal plainDisplayUpper = BigDecimal.ONE.movePointRight(17);
+            BigDecimal plainDisplayUpper = BigDecimal.ONE.movePointRight(15);
             BigDecimal plainDisplayLower = BigDecimal.ONE.movePointLeft(10);
             if (plainDisplayUpper.compareTo(result.abs()) > 0 && plainDisplayLower.compareTo(result.abs()) < 0) {
                 return result.round(MathContext.DECIMAL64).stripTrailingZeros().toPlainString();
@@ -168,6 +168,8 @@ public class CalculatorProcessor {
         if (cache.size() != 1) {
             throw new IllegalArgumentException("Invalid expression: error");
         }
+        System.out.println(">>>>>>> END");
+        System.out.println();
         return cache.pop();
     }
 
@@ -231,6 +233,7 @@ public class CalculatorProcessor {
                     }
                     cache.push(capturedOperator);
                     previousInput = "operator";
+                    System.out.println("Operator: " + capturedOperator);
                 }
 
                 if ("(".equals(capturedParenthesis)) {
@@ -253,6 +256,7 @@ public class CalculatorProcessor {
                         cache.push("(");
                         previousInput = "(";
                     }
+                    System.out.println("Parenthesis: " + capturedParenthesis);
                 }
 
                 if (")".equals(capturedParenthesis)) {
@@ -278,6 +282,7 @@ public class CalculatorProcessor {
                         postFix.push(temp);
                     }
                     previousInput = ")";
+                    System.out.println("Parenthesis: " + capturedParenthesis);
                 }
 
                 if (capturedPeriod != null) {
@@ -298,6 +303,7 @@ public class CalculatorProcessor {
                     }
                     functionParameterCount.push(functionParameterCount.pop() + 1);
                     previousInput = ",";
+                    System.out.println("Period: " + capturedPeriod);
                 }
 
                 if (capturedVariableOrFunction != null) {
@@ -325,6 +331,7 @@ public class CalculatorProcessor {
                         throw new IllegalArgumentException(
                                 String.format("Invalid expression: unknown variable %s", capturedVariableOrFunction));
                     }
+                    System.out.println("VariableOrFunction: " + capturedVariableOrFunction);
                 }
 
                 if (capturedNumber != null) {
@@ -346,11 +353,13 @@ public class CalculatorProcessor {
                         postFix.push(capturedNumber);
                     }
                     previousInput = "operand";
+                    System.out.println("Number: " + capturedNumber);
                 }
 
             } else {
                 throw new IllegalArgumentException("Invalid expression: empty expression");
             }
+            System.out.println();
             System.out.println("cache: " + cache);
             System.out.println("postFix: " + postFix);
             System.out.println();
@@ -362,6 +371,9 @@ public class CalculatorProcessor {
             }
             postFix.push(temp);
         }
+        System.out.println();
+        System.out.println("postFIX>>>>>>>");
+        System.out.println("postFix: " + postFix);
         return postFix;
     }
 }
