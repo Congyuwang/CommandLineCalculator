@@ -79,7 +79,7 @@ Must start with a latin letter, and follows latin letters or numbers and undersc
 ##### NormalDistribution
 
 - ```pnorm(q)``` distribution function of Normal Distribution (0, 1)
-- ```pnorm(x)``` density function of Normal Distribution (0, 1)
+- ```dnorm(x)``` density function of Normal Distribution (0, 1)
 - ```qnorm(p)``` inverse distribution function of Normal Distribution (0, 1)
 - ```rnorm()``` random sample from Normal Distribution (0, 1)
 - ```pnorm(q, mean, sd)``` distribution function of Normal Distribution
@@ -111,7 +111,7 @@ Must start with a latin letter, and follows latin letters or numbers and undersc
 ##### CauchyDistribution
 
 - ```pcauchy(q)``` distribution function of Cauchy Distribution with median = 0, scale = 1
-- ```pcauchy(x)``` density function of Cauchy Distribution with median = 0, scale = 1
+- ```dcauchy(x)``` density function of Cauchy Distribution with median = 0, scale = 1
 - ```qcauchy(p)``` inverse distribution function of Cauchy Distribution with median = 0, scale = 1
 - ```rcauchy()``` random sample from Cauchy Distribution with median = 0, scale = 1
 - ```pcauchy(q, median, scale)``` distribution function of Cauchy Distribution
@@ -122,7 +122,7 @@ Must start with a latin letter, and follows latin letters or numbers and undersc
 ##### ExponentialDistribution
 
 - ```pexp(q)``` distribution function of Exponential Distribution with mean = 1
-- ```pexp(x)``` density function of Exponential Distribution with mean = 1
+- ```dexp(x)``` density function of Exponential Distribution with mean = 1
 - ```qexp(p)``` inverse distribution function of Exponential Distribution with mean = 1
 - ```rexp()``` random sample from Exponential Distribution with mean = 1
 - ```pexp(q, mean)``` distribution function of Exponential Distribution
